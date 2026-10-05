@@ -1,0 +1,432 @@
+export const fallbackContent = {
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-10-02T09:30:00.000Z",
+    "updatedBy": "system"
+  },
+  "site": {
+    "name": "Holosoft",
+    "title": "Holosoft — Everything Tech.",
+    "description": "Holosoft designs, builds and connects the technology behind modern businesses.",
+    "contactEmail": "hello@holosoft.tech",
+    "statusLabel": "SYSTEMS ONLINE",
+    "navigation": [
+      {
+        "label": "Services",
+        "href": "#services"
+      },
+      {
+        "label": "Work",
+        "href": "#work"
+      },
+      {
+        "label": "Process",
+        "href": "#process"
+      },
+      {
+        "label": "About",
+        "href": "#about"
+      }
+    ],
+    "headerCta": {
+      "label": "Start a project",
+      "href": "#contact"
+    }
+  },
+  "hero": {
+    "eyebrow": "Software. Systems. Infrastructure. Digital.",
+    "headline": [
+      "EVERYTHING",
+      "TECH.",
+      "ONE CORE."
+    ],
+    "outlineIndex": 1,
+    "intro": "Holosoft designs, builds and connects the technology behind modern businesses — from product interfaces to the systems running underneath them.",
+    "primaryCta": {
+      "label": "Explore capabilities",
+      "href": "#services"
+    },
+    "secondaryCta": {
+      "label": "Talk to Holosoft",
+      "href": "#contact"
+    },
+    "metaLeft": "HOL/SYS 01",
+    "metaRight": "TECH SOLUTIONS / 24—7",
+    "media": {
+      "src": "",
+      "alt": "",
+      "position": "right",
+      "fit": "cover"
+    }
+  },
+  "manifesto": {
+    "label": "THE HOLOSOFT MODEL",
+    "heading": "Technology should feel simple even when the system behind it isn’t.",
+    "description": "We combine strategy, design, engineering and infrastructure into one operating layer. Fewer handoffs. Less noise. Better systems.",
+    "terminalLines": [
+      "> architecture... stable",
+      "> experience... optimized",
+      "> security... active",
+      "> deployment... ready_"
+    ],
+    "media": {
+      "src": "",
+      "alt": "",
+      "position": "right",
+      "fit": "cover"
+    }
+  },
+  "services": [
+    {
+      "id": "web-product",
+      "no": "01",
+      "title": "Web + Product",
+      "description": "High-performance websites, portals, dashboards and digital products designed around real business workflows.",
+      "tag": "DESIGN / DEV",
+      "enabled": true,
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "right",
+        "fit": "cover"
+      }
+    },
+    {
+      "id": "software-systems",
+      "no": "02",
+      "title": "Software Systems",
+      "description": "Custom internal platforms, automation layers, integrations and purpose-built tools that remove operational friction.",
+      "tag": "SYSTEMS / API",
+      "enabled": true,
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "right",
+        "fit": "cover"
+      }
+    },
+    {
+      "id": "ai-automation",
+      "no": "03",
+      "title": "AI + Automation",
+      "description": "Practical AI workflows, intelligent assistants, process automation and machine-assisted decision systems.",
+      "tag": "AI / AGENTS",
+      "enabled": true,
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "right",
+        "fit": "cover"
+      }
+    },
+    {
+      "id": "cloud-infra",
+      "no": "04",
+      "title": "Cloud + Infrastructure",
+      "description": "Reliable hosting, deployment pipelines, cloud architecture, device ecosystems and connected infrastructure.",
+      "tag": "CLOUD / OPS",
+      "enabled": true,
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "right",
+        "fit": "cover"
+      }
+    },
+    {
+      "id": "security-support",
+      "no": "05",
+      "title": "Security + Support",
+      "description": "Secure-by-default systems, hardening, monitoring, maintenance and ongoing technical support for critical operations.",
+      "tag": "SEC / CARE",
+      "enabled": true,
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "right",
+        "fit": "cover"
+      }
+    }
+  ],
+  "projects": [
+    {
+      "id": "connected-ops",
+      "code": "CASE_001",
+      "type": "ENTERPRISE SYSTEM",
+      "title": "Connected Operations Platform",
+      "description": "Unified data, workflow, access and reporting inside one clean operational interface.",
+      "visual": "network",
+      "featured": true,
+      "published": true,
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "background",
+        "fit": "cover"
+      }
+    },
+    {
+      "id": "product-interface",
+      "code": "CASE_002",
+      "type": "DIGITAL PRODUCT",
+      "title": "High-velocity Product Interface",
+      "description": "A modular digital experience designed to move fast without losing clarity or control.",
+      "visual": "ui",
+      "featured": false,
+      "published": true,
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "background",
+        "fit": "cover"
+      }
+    },
+    {
+      "id": "automation-layer",
+      "code": "CASE_003",
+      "type": "AUTOMATION",
+      "title": "Automation + Control Layer",
+      "description": "Connected workflows, integrations and intelligent system actions orchestrated behind one interface.",
+      "visual": "console",
+      "featured": false,
+      "published": true,
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "background",
+        "fit": "cover"
+      }
+    }
+  ],
+  "process": [
+    {
+      "id": "decode",
+      "no": "01",
+      "title": "Decode",
+      "description": "Understand the business, users, constraints and the actual system that needs to exist.",
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "right",
+        "fit": "cover"
+      }
+    },
+    {
+      "id": "architect",
+      "no": "02",
+      "title": "Architect",
+      "description": "Define the product, stack, flows, infrastructure and security before complexity compounds.",
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "right",
+        "fit": "cover"
+      }
+    },
+    {
+      "id": "build",
+      "no": "03",
+      "title": "Build",
+      "description": "Design and engineer the system with a sharp interface, clean logic and production discipline.",
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "right",
+        "fit": "cover"
+      }
+    },
+    {
+      "id": "operate",
+      "no": "04",
+      "title": "Operate",
+      "description": "Deploy, monitor, support and keep evolving the system as the business changes.",
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "right",
+        "fit": "cover"
+      }
+    }
+  ],
+  "contact": {
+    "heading": "Have a system to build?",
+    "subheading": "Bring us the messy version. We’ll help turn it into something precise.",
+    "ctaLabel": "hello@holosoft.tech",
+    "label": "INITIATE CONNECTION",
+    "media": {
+      "src": "",
+      "alt": "",
+      "position": "background",
+      "fit": "cover"
+    }
+  },
+  "sections": {
+    "services": {
+      "label": "WHAT WE BUILD",
+      "heading": "One partner across the full technology stack.",
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "right",
+        "fit": "cover"
+      }
+    },
+    "work": {
+      "label": "SELECTED DIRECTION",
+      "heading": "Built like infrastructure. Presented like a product.",
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "right",
+        "fit": "cover"
+      }
+    },
+    "process": {
+      "label": "HOW WE WORK",
+      "heading": "From ambiguity to an operating system.",
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "right",
+        "fit": "cover"
+      }
+    }
+  },
+  "partnerBanner": {
+    "enabled": true,
+    "label": "TRUSTED NETWORK",
+    "heading": "Partners connected to the Holosoft ecosystem.",
+    "speed": 30,
+    "media": {
+      "src": "",
+      "alt": "",
+      "position": "background",
+      "fit": "cover"
+    }
+  },
+  "partners": [
+    {
+      "id": "partner-01",
+      "name": "YOUR PARTNER",
+      "logo": "",
+      "href": "",
+      "tagline": "CONNECTED NODE",
+      "enabled": true
+    },
+    {
+      "id": "partner-02",
+      "name": "PARTNER TWO",
+      "logo": "",
+      "href": "",
+      "tagline": "TECH PARTNER",
+      "enabled": true
+    },
+    {
+      "id": "partner-03",
+      "name": "PARTNER THREE",
+      "logo": "",
+      "href": "",
+      "tagline": "ECOSYSTEM",
+      "enabled": true
+    }
+  ],
+  "pages": [
+    {
+      "id": "about-holosoft",
+      "slug": "about-holosoft",
+      "title": "About Holosoft",
+      "navLabel": "Company",
+      "eyebrow": "HOLOSOFT / COMPANY NODE",
+      "heading": "Technology, engineered as one connected system.",
+      "intro": "A flexible CMS-managed page for company information, capabilities, people, case studies or any future content.",
+      "published": true,
+      "showInNav": false,
+      "showContact": true,
+      "seoTitle": "About Holosoft",
+      "seoDescription": "Learn more about Holosoft.",
+      "sections": [
+        {
+          "id": "page-block-01",
+          "label": "SYSTEM / 01",
+          "heading": "One technology partner across the stack.",
+          "body": "Add, remove and reorder page sections from the CMS.\nEach page can be drafted privately before publishing live.",
+          "layout": "split",
+          "accent": "blue",
+          "ctaLabel": "",
+          "ctaHref": "",
+          "media": {
+            "src": "",
+            "alt": "",
+            "position": "right",
+            "fit": "cover"
+          }
+        }
+      ],
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "right",
+        "fit": "cover"
+      }
+    }
+  ],
+  "teamSection": {
+    "enabled": true,
+    "label": "OUR TEAM",
+    "heading": "The people behind the system.",
+    "description": "Strategy, design and engineering connected as one team.",
+    "media": {
+      "src": "",
+      "alt": "",
+      "position": "background",
+      "fit": "cover"
+    }
+  },
+  "team": [
+    {
+      "id": "team-01",
+      "name": "Team Member 01",
+      "role": "Role / Discipline",
+      "bio": "Add a short team bio from the CMS.",
+      "email": "",
+      "linkedin": "",
+      "enabled": false,
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "top",
+        "fit": "cover"
+      }
+    },
+    {
+      "id": "team-02",
+      "name": "Team Member 02",
+      "role": "Role / Discipline",
+      "bio": "Add a short team bio from the CMS.",
+      "email": "",
+      "linkedin": "",
+      "enabled": false,
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "top",
+        "fit": "cover"
+      }
+    },
+    {
+      "id": "team-03",
+      "name": "Team Member 03",
+      "role": "Role / Discipline",
+      "bio": "Add a short team bio from the CMS.",
+      "email": "",
+      "linkedin": "",
+      "enabled": false,
+      "media": {
+        "src": "",
+        "alt": "",
+        "position": "top",
+        "fit": "cover"
+      }
+    }
+  ]
+};
