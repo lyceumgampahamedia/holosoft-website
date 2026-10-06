@@ -54,6 +54,9 @@ jobs:
       - name: Build website and CMS
         run: npm run build
 
+      - name: Generate SEO artifacts
+        run: node scripts/generate-seo.mjs
+
       - name: Assemble Pages artifact
         shell: bash
         run: |
