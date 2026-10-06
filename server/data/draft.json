@@ -89,7 +89,9 @@
         "alt": "",
         "position": "right",
         "fit": "cover"
-      }
+      },
+      "href": "",
+      "linkNewTab": false
     },
     {
       "id": "software-systems",
@@ -103,7 +105,9 @@
         "alt": "",
         "position": "right",
         "fit": "cover"
-      }
+      },
+      "href": "",
+      "linkNewTab": false
     },
     {
       "id": "ai-automation",
@@ -117,7 +121,9 @@
         "alt": "",
         "position": "right",
         "fit": "cover"
-      }
+      },
+      "href": "",
+      "linkNewTab": false
     },
     {
       "id": "cloud-infra",
@@ -131,7 +137,9 @@
         "alt": "",
         "position": "right",
         "fit": "cover"
-      }
+      },
+      "href": "",
+      "linkNewTab": false
     },
     {
       "id": "security-support",
@@ -145,7 +153,9 @@
         "alt": "",
         "position": "right",
         "fit": "cover"
-      }
+      },
+      "href": "",
+      "linkNewTab": false
     }
   ],
   "projects": [
