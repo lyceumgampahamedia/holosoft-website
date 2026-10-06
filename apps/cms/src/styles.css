@@ -180,3 +180,294 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .section-copy-card .media-editor{margin-inline:-6px}.section-copy-card .media-editor-grid{grid-template-columns:1fr;padding:12px}.section-copy-card .media-preview{min-height:130px}.section-copy-card .media-preview img{min-height:130px}.section-copy-card .media-fields .two-col{grid-template-columns:1fr}.section-copy-card .media-editor-head{align-items:flex-start}.section-copy-card .media-editor-head>div{align-items:flex-start;flex-direction:column;gap:5px}
 @media(max-width:1180px){.media-editor-grid{grid-template-columns:1fr}.media-preview{min-height:180px}.team-record .media-preview{min-height:220px}}
 @media(max-width:760px){.media-editor-grid{padding:13px;gap:13px}.media-editor-head{align-items:flex-start}.media-editor-head>div{align-items:flex-start;flex-direction:column;gap:5px}.media-preview,.media-preview img{min-height:150px}.team-record .media-preview,.team-record .media-preview img{min-height:210px}}
+/* =========================================================
+   CMS V1.6 — BUTTER MOTION + ALIGNMENT QA
+   Consistent easing, stable controls, safer wrapping and grids.
+   ========================================================= */
+:root {
+  --ease-butter:cubic-bezier(.16,1,.3,1);
+  --motion-ui:.5s;
+  --motion-panel:.72s;
+}
+html {
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+body,button,input,textarea,select { font-kerning:normal; }
+button,a,input,textarea,select { touch-action:manipulation; }
+button,input,textarea,select { line-height:1.25; }
+
+.sidebar nav button,
+.sidebar-bottom a,
+.sidebar-bottom button,
+.outline-button,
+.primary-button,
+.save-button,
+.draft-button,
+.danger-button,
+.item-rail button,
+.revision-row button,
+.quick-panel button,
+.mini-action,
+.file-upload,
+.media-editor-head button,
+.page-block-admin-head button {
+  transition:
+    color var(--motion-ui) var(--ease-butter),
+    background var(--motion-ui) var(--ease-butter),
+    border-color var(--motion-ui) var(--ease-butter),
+    box-shadow .65s var(--ease-butter),
+    transform .55s var(--ease-butter) !important;
+}
+
+.panel,
+.editor-block,
+.content-item,
+.page-block-admin,
+.partner-preview,
+.media-editor {
+  transition:
+    border-color .6s var(--ease-butter),
+    box-shadow var(--motion-panel) var(--ease-butter),
+    background var(--motion-panel) var(--ease-butter) !important;
+}
+
+.field input,
+.field textarea,
+.field select {
+  min-height:46px;
+  line-height:1.45;
+  transition:
+    border-color .46s var(--ease-butter),
+    box-shadow .6s var(--ease-butter),
+    background .46s var(--ease-butter) !important;
+}
+.field textarea { min-height:116px; }
+.field > span,
+.field small {
+  line-height:1.4;
+  overflow-wrap:anywhere;
+}
+
+.toggle,
+.toggle-track,
+.toggle-track i {
+  transition-duration:.46s !important;
+  transition-timing-function:var(--ease-butter) !important;
+}
+.toggle { min-height:30px;align-items:center;white-space:nowrap; }
+.toggle-track { flex:0 0 auto; }
+
+/* No layout-changing hover padding. */
+.quick-panel button {
+  min-height:50px;
+  align-items:center;
+  gap:16px;
+  line-height:1.35;
+}
+.quick-panel button:hover {
+  padding-left:18px !important;
+}
+.sidebar nav button {
+  min-height:44px;
+  line-height:1.25;
+}
+.sidebar nav button > * { min-width:0; }
+.sidebar nav button b { line-height:1; }
+
+/* Header and page title alignment. */
+.cms-topbar {
+  min-height:82px;
+  height:auto;
+  gap:24px;
+}
+.cms-topbar > div:first-child,
+.top-actions {
+  min-width:0;
+}
+.top-actions {
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  row-gap:8px;
+}
+.unsaved,.synced {
+  line-height:1.35;
+  white-space:nowrap;
+}
+.section-title {
+  align-items:flex-end;
+}
+.section-title > div {
+  min-width:0;
+}
+.section-title > div > p,
+.section-index {
+  line-height:1.35;
+}
+.section-title h1 {
+  text-wrap:balance;
+  overflow-wrap:anywhere;
+}
+
+/* Panel labels stay vertically centered even when text wraps. */
+.panel-head,
+.block-head {
+  min-height:42px;
+  height:auto;
+  padding:11px 15px;
+  line-height:1.35;
+  gap:14px;
+}
+.panel-head > *,
+.block-head > * {
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+.stat-card,
+.panel,
+.editor-block,
+.content-item,
+.item-body {
+  min-width:0;
+}
+.stat-card > span,
+.stat-card p {
+  overflow-wrap:anywhere;
+}
+
+/* Editor rows remain aligned with long CMS content. */
+.item-header {
+  align-items:flex-start;
+}
+.item-header > div:first-child {
+  min-width:0;
+  flex:1 1 auto;
+}
+.item-header h2 {
+  line-height:1.12;
+  overflow-wrap:anywhere;
+  text-wrap:balance;
+}
+.item-header p {
+  line-height:1.35;
+  overflow-wrap:anywhere;
+}
+.item-header .toggle,
+.item-header .toggle-stack {
+  flex:0 0 auto;
+}
+.two-col,
+.three-col,
+.nav-edit-row,
+.process-admin-grid,
+.partner-admin-grid,
+.media-editor-grid {
+  align-items:start;
+}
+.two-col > *,
+.three-col > *,
+.nav-edit-row > *,
+.process-admin-grid > *,
+.partner-admin-grid > *,
+.media-editor-grid > * {
+  min-width:0;
+}
+
+.revision-row {
+  align-items:center;
+}
+.revision-row code {
+  min-width:0;
+  white-space:nowrap;
+}
+.revision-row button {
+  white-space:nowrap;
+}
+
+.media-editor-head {
+  min-height:46px;
+  height:auto;
+}
+.media-editor-head > div {
+  min-width:0;
+}
+.media-editor-head span,
+.media-editor-head small {
+  line-height:1.35;
+  overflow-wrap:anywhere;
+}
+.partner-preview strong,
+.partner-preview small {
+  overflow-wrap:anywhere;
+}
+
+/* Gentle entrance, without shifting persistent controls. */
+.cms-content {
+  animation:cms-content-enter-smooth .82s var(--ease-butter) both !important;
+}
+@keyframes cms-content-enter-smooth {
+  from { opacity:.72;transform:translate3d(0,7px,0); }
+  to { opacity:1;transform:translate3d(0,0,0); }
+}
+
+/* Continuous system graphics stay compositor-friendly. */
+.signal-ring,
+.loading-core,
+.loading-core img,
+.login-core .ring,
+.login-scan {
+  will-change:transform;
+  backface-visibility:hidden;
+}
+
+/* Responsive QA before the existing mobile collapse. */
+@media (max-width:1280px) {
+  .three-col { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .stat-grid-expanded { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width:980px) {
+  .item-header { flex-direction:column; }
+  .item-header .toggle,
+  .item-header .toggle-stack { align-self:flex-start; }
+  .cms-topbar { padding-inline:20px; }
+  .top-actions { gap:10px; }
+}
+@media (max-width:760px) {
+  .cms-topbar { align-items:flex-start; }
+  .top-actions { justify-content:flex-start; }
+  .section-title h1 { line-height:.96; }
+  .two-col,
+  .three-col { grid-template-columns:1fr; }
+  .panel-head,
+  .block-head { align-items:flex-start; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .cms-content { animation:none !important; }
+  .sidebar nav button,
+  .sidebar-bottom a,
+  .sidebar-bottom button,
+  .outline-button,
+  .primary-button,
+  .save-button,
+  .draft-button,
+  .danger-button,
+  .item-rail button,
+  .revision-row button,
+  .quick-panel button,
+  .mini-action,
+  .file-upload,
+  .media-editor-head button,
+  .page-block-admin-head button,
+  .panel,
+  .editor-block,
+  .content-item,
+  .page-block-admin,
+  .partner-preview,
+  .media-editor,
+  .field input,
+  .field textarea,
+  .field select {
+    transition:none !important;
+  }
+}
