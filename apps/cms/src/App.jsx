@@ -268,35 +268,72 @@ function ListEditor({ type, items, setItems }) {
   const isService = type === 'services';
   const add = () => {
     const no = String(items.length + 1).padStart(2, '0');
-    const item = isService ? { id: `service-${Date.now()}`, no, title: 'New Capability', description: 'Describe the capability.', tag: 'TECH / BUILD', enabled: true, media: blankMedia('right') } : { id: `project-${Date.now()}`, code: `CASE_${String(items.length + 1).padStart(3,'0')}`, slug: `new-project-${items.length + 1}`, type: 'DIGITAL SYSTEM', title: 'New Project', description: 'Describe the system and outcome.', visual: 'network', featured: false, published: false, caseStudyEnabled: true, client: '', year: '', disciplines: '', caseHeading: '', caseIntro: '', challenge: '', approach: '', outcome: '', metrics: [{value:'',label:''},{value:'',label:''},{value:'',label:''}], media: blankMedia('background') };
+    const item = isService
+      ? { id: `service-${Date.now()}`, no, title: 'New Capability', description: 'Describe the capability.', tag: 'TECH / BUILD', enabled: true, media: blankMedia('right') }
+      : { id: `project-${Date.now()}`, code: `CASE_${String(items.length + 1).padStart(3,'0')}`, slug: `new-project-${items.length + 1}`, type: 'DIGITAL SYSTEM', title: 'New Project', description: 'Describe the system and outcome.', visual: 'network', featured: false, published: false, caseStudyEnabled: true, client: '', year: '', disciplines: '', caseHeading: '', caseIntro: '', challenge: '', approach: '', outcome: '', metrics: [{value:'',label:''},{value:'',label:''},{value:'',label:''}], gallery: [], chapters: [], architectureLabel: '', architectureHeading: '', architectureBody: '', architectureNodes: [], media: blankMedia('background') };
     setItems([...items, item]);
   };
   const patch = (index, key, value) => { const next = clone(items); next[index][key] = value; setItems(next); };
   const patchMetric = (index, metricIndex, key, value) => { const next = clone(items); next[index].metrics ||= [{value:'',label:''},{value:'',label:''},{value:'',label:''}]; while (next[index].metrics.length < 3) next[index].metrics.push({value:'',label:''}); next[index].metrics[metricIndex] = { ...next[index].metrics[metricIndex], [key]: value }; setItems(next); };
+  const patchGallery = (index, galleryIndex, key, value) => { const next = clone(items); next[index].gallery ||= []; next[index].gallery[galleryIndex] = { ...next[index].gallery[galleryIndex], [key]: value }; setItems(next); };
+  const addGallery = (index) => { const next = clone(items); next[index].gallery ||= []; if (next[index].gallery.length >= 6) return; next[index].gallery.push({ id:`gallery-${Date.now()}`, caption:'', layout:'wide', media:blankMedia('background') }); setItems(next); };
+  const removeGallery = (index, galleryIndex) => { const next = clone(items); next[index].gallery ||= []; next[index].gallery.splice(galleryIndex,1); setItems(next); };
+  const moveGallery = (index, galleryIndex, delta) => { const next = clone(items); const gallery = next[index].gallery || []; const target = galleryIndex + delta; if (target < 0 || target >= gallery.length) return; [gallery[galleryIndex],gallery[target]]=[gallery[target],gallery[galleryIndex]]; setItems(next); };
+  const patchChapter = (index, chapterIndex, key, value) => { const next = clone(items); next[index].chapters ||= []; next[index].chapters[chapterIndex] = { ...next[index].chapters[chapterIndex], [key]: value }; setItems(next); };
+  const addChapter = (index) => { const next = clone(items); next[index].chapters ||= []; if (next[index].chapters.length >= 4) return; next[index].chapters.push({ id:`chapter-${Date.now()}`, label:`CHAPTER / ${String(next[index].chapters.length + 1).padStart(2,'0')}`, title:'New story chapter', body:'', media:blankMedia('background') }); setItems(next); };
+  const removeChapter = (index, chapterIndex) => { const next = clone(items); next[index].chapters ||= []; next[index].chapters.splice(chapterIndex,1); setItems(next); };
+  const moveChapter = (index, chapterIndex, delta) => { const next = clone(items); const chapters = next[index].chapters || []; const target = chapterIndex + delta; if (target < 0 || target >= chapters.length) return; [chapters[chapterIndex],chapters[target]]=[chapters[target],chapters[chapterIndex]]; setItems(next); };
+  const patchArchitectureNode = (index, nodeIndex, value) => { const next = clone(items); next[index].architectureNodes ||= []; while(next[index].architectureNodes.length <= nodeIndex) next[index].architectureNodes.push(''); next[index].architectureNodes[nodeIndex] = value; setItems(next); };
   const remove = (index) => { if (!confirm('Delete this content item?')) return; setItems(items.filter((_, i) => i !== index)); };
   const move = (index, delta) => { const target = index + delta; if (target < 0 || target >= items.length) return; const next = clone(items); [next[index], next[target]] = [next[target], next[index]]; setItems(next); };
+
   return <>
     <SectionTitle index={isService ? '06 / MODULES' : '07 / SYSTEMS'} eyebrow={isService ? 'CAPABILITIES' : 'CASE STUDIES'} title={isService ? 'Services' : 'Projects'} action={<button className="outline-button" onClick={add}>+ NEW {isService ? 'SERVICE' : 'PROJECT'}</button>} />
-    {!isService && <div className="module-notice"><span>CASE STUDY ENGINE</span><p>Every published project can open into a cinematic case-study route at <code>/work/project-slug</code>. Story fields and result metrics are optional, so only verified information needs to be published.</p></div>}
-    <div className="item-stack">{items.map((item, index) => <section className={`content-item ${!isService ? 'project-record' : ''}`} key={item.id}><div className="item-rail"><span>{isService ? item.no : item.code}</span><div><button onClick={() => move(index,-1)}>↑</button><button onClick={() => move(index,1)}>↓</button></div></div><div className="item-body"><div className="item-header"><div><p>{isService ? 'SERVICE MODULE' : 'PROJECT RECORD'}</p><h2>{item.title}</h2>{!isService && item.slug && <a className="record-route" href={`${WEBSITE_URL.replace(/\/$/,'')}/work/${item.slug}`} target="_blank" rel="noreferrer">/work/{item.slug} ↗</a>}</div><div className="toggle-stack"><Toggle label={isService ? 'Visible' : 'Published'} checked={isService ? item.enabled : item.published} onChange={(v) => patch(index, isService ? 'enabled' : 'published', v)} />{!isService && <Toggle label="Case study page" checked={item.caseStudyEnabled !== false} onChange={(v)=>patch(index,'caseStudyEnabled',v)} />}</div></div>
-      <div className="two-col"><Field label={isService ? 'NUMBER' : 'CASE CODE'} value={isService ? item.no : item.code} onChange={(v) => patch(index, isService ? 'no' : 'code', v)} /><Field label="TITLE" value={item.title} onChange={(v) => patch(index,'title',v)} />{isService ? <Field label="TAG" value={item.tag} onChange={(v) => patch(index,'tag',v)} /> : <><Field label="TYPE" value={item.type} onChange={(v) => patch(index,'type',v)} /><SelectField label="VISUAL MODE" value={item.visual} onChange={(v) => patch(index,'visual',v)} options={[["network","Network"],["ui","Interface"],["console","Console"]]} /></>}</div>
-      <Field label="DESCRIPTION" textarea value={item.description} onChange={(v) => patch(index,'description',v)} />
-      <MediaEditor label={`${isService ? 'SERVICE' : 'PROJECT'} IMAGE / OPTIONAL`} media={item.media} onChange={(v)=>patch(index,'media',v)} positions={isService ? [["right","Right thumbnail"],["left","Left thumbnail"],["background","Background"]] : [["background","Visual background"],["right","Right"],["left","Left"]]} />
-      {!isService && <>
-        <div className="case-study-admin">
-          <div className="submodule-head"><div><span>CASE STUDY PAGE</span><em>STORY / PROOF / ROUTE</em></div></div>
-          <div className="three-col"><Field label="URL SLUG" value={item.slug || slugify(item.title)} onChange={(v)=>patch(index,'slug',slugify(v))} /><Field label="CLIENT / OPTIONAL" value={item.client || ''} onChange={(v)=>patch(index,'client',v)} /><Field label="YEAR / OPTIONAL" value={item.year || ''} onChange={(v)=>patch(index,'year',v)} /></div>
-          <Field label="DISCIPLINES / SERVICES" value={item.disciplines || ''} onChange={(v)=>patch(index,'disciplines',v)} placeholder="Strategy / UX / Engineering" />
-          <Field label="CASE STUDY HEADING / OPTIONAL" value={item.caseHeading || ''} onChange={(v)=>patch(index,'caseHeading',v)} />
-          <Field label="CASE STUDY INTRO / OPTIONAL" textarea value={item.caseIntro || ''} onChange={(v)=>patch(index,'caseIntro',v)} />
-          <div className="case-story-admin-grid"><Field label="CHALLENGE" textarea value={item.challenge || ''} onChange={(v)=>patch(index,'challenge',v)} /><Field label="APPROACH" textarea value={item.approach || ''} onChange={(v)=>patch(index,'approach',v)} /><Field label="OUTCOME" textarea value={item.outcome || ''} onChange={(v)=>patch(index,'outcome',v)} /></div>
-          <div className="submodule-head"><div><span>VERIFIED RESULTS</span><em>OPTIONAL / UP TO 3</em></div></div>
-          <div className="case-metric-admin-grid">{[0,1,2].map((metricIndex) => <div className="case-metric-admin" key={metricIndex}><span>METRIC {String(metricIndex + 1).padStart(2,'0')}</span><Field label="VALUE" value={item.metrics?.[metricIndex]?.value || ''} onChange={(v)=>patchMetric(index,metricIndex,'value',v)} placeholder="42%" /><Field label="LABEL" value={item.metrics?.[metricIndex]?.label || ''} onChange={(v)=>patchMetric(index,metricIndex,'label',v)} placeholder="Faster workflow" /></div>)}</div>
-        </div>
-        <Toggle label="Feature as large card" checked={item.featured} onChange={(v) => patch(index,'featured',v)} />
-      </>}
-      <button className="danger-button" onClick={() => remove(index)}>DELETE RECORD</button>
-    </div></section>)}</div>
+    {!isService && <div className="module-notice"><span>CASE STUDY ENGINE / V2</span><p>Build cinematic project stories with gallery frames, scroll chapters and architecture maps. Every module is optional and hidden automatically when empty.</p></div>}
+    <div className="item-stack">{items.map((item, index) => <section className={`content-item ${!isService ? 'project-record' : ''}`} key={item.id}>
+      <div className="item-rail"><span>{isService ? item.no : item.code}</span><div><button onClick={() => move(index,-1)}>↑</button><button onClick={() => move(index,1)}>↓</button></div></div>
+      <div className="item-body">
+        <div className="item-header"><div><p>{isService ? 'SERVICE MODULE' : 'PROJECT RECORD'}</p><h2>{item.title}</h2>{!isService && item.slug && <a className="record-route" href={`${WEBSITE_URL.replace(/\/$/,'')}/work/${item.slug}`} target="_blank" rel="noreferrer">/work/{item.slug} ↗</a>}</div><div className="toggle-stack"><Toggle label={isService ? 'Visible' : 'Published'} checked={isService ? item.enabled : item.published} onChange={(v) => patch(index, isService ? 'enabled' : 'published', v)} />{!isService && <Toggle label="Case study page" checked={item.caseStudyEnabled !== false} onChange={(v)=>patch(index,'caseStudyEnabled',v)} />}</div></div>
+        <div className="two-col"><Field label={isService ? 'NUMBER' : 'CASE CODE'} value={isService ? item.no : item.code} onChange={(v) => patch(index, isService ? 'no' : 'code', v)} /><Field label="TITLE" value={item.title} onChange={(v) => patch(index,'title',v)} />{isService ? <Field label="TAG" value={item.tag} onChange={(v) => patch(index,'tag',v)} /> : <><Field label="TYPE" value={item.type} onChange={(v) => patch(index,'type',v)} /><SelectField label="VISUAL MODE" value={item.visual} onChange={(v) => patch(index,'visual',v)} options={[["network","Network"],["ui","Interface"],["console","Console"]]} /></>}</div>
+        <Field label="DESCRIPTION" textarea value={item.description} onChange={(v) => patch(index,'description',v)} />
+        <MediaEditor label={`${isService ? 'SERVICE' : 'PROJECT'} IMAGE / OPTIONAL`} media={item.media} onChange={(v)=>patch(index,'media',v)} positions={isService ? [["right","Right thumbnail"],["left","Left thumbnail"],["background","Background"]] : [["background","Visual background"],["right","Right"],["left","Left"]]} />
+        {!isService && <>
+          <div className="case-study-admin">
+            <div className="submodule-head"><div><span>CASE STUDY PAGE</span><em>STORY / PROOF / ROUTE</em></div></div>
+            <div className="three-col"><Field label="URL SLUG" value={item.slug || slugify(item.title)} onChange={(v)=>patch(index,'slug',slugify(v))} /><Field label="CLIENT / OPTIONAL" value={item.client || ''} onChange={(v)=>patch(index,'client',v)} /><Field label="YEAR / OPTIONAL" value={item.year || ''} onChange={(v)=>patch(index,'year',v)} /></div>
+            <Field label="DISCIPLINES / SERVICES" value={item.disciplines || ''} onChange={(v)=>patch(index,'disciplines',v)} placeholder="Strategy / UX / Engineering" />
+            <Field label="CASE STUDY HEADING / OPTIONAL" value={item.caseHeading || ''} onChange={(v)=>patch(index,'caseHeading',v)} />
+            <Field label="CASE STUDY INTRO / OPTIONAL" textarea value={item.caseIntro || ''} onChange={(v)=>patch(index,'caseIntro',v)} />
+            <div className="case-story-admin-grid"><Field label="CHALLENGE" textarea value={item.challenge || ''} onChange={(v)=>patch(index,'challenge',v)} /><Field label="APPROACH" textarea value={item.approach || ''} onChange={(v)=>patch(index,'approach',v)} /><Field label="OUTCOME" textarea value={item.outcome || ''} onChange={(v)=>patch(index,'outcome',v)} /></div>
+
+            <div className="submodule-head"><div><span>CINEMATIC GALLERY</span><em>{(item.gallery || []).length} / 6 FRAMES</em></div><button className="mini-action" type="button" disabled={(item.gallery || []).length >= 6} onClick={()=>addGallery(index)}>+ ADD FRAME</button></div>
+            <div className="case-gallery-admin-list">{(item.gallery || []).map((frame,frameIndex) => <div className="case-gallery-admin" key={frame.id || frameIndex}>
+              <div className="case-module-toolbar"><span>FRAME {String(frameIndex + 1).padStart(2,'0')}</span><div><button onClick={()=>moveGallery(index,frameIndex,-1)}>↑</button><button onClick={()=>moveGallery(index,frameIndex,1)}>↓</button><button className="danger-mini" onClick={()=>removeGallery(index,frameIndex)}>×</button></div></div>
+              <div className="two-col"><Field label="CAPTION" value={frame.caption || ''} onChange={(v)=>patchGallery(index,frameIndex,'caption',v)} /><SelectField label="LAYOUT" value={frame.layout || 'wide'} onChange={(v)=>patchGallery(index,frameIndex,'layout',v)} options={[["wide","Wide / Cinematic"],["half","Half width"],["tall","Tall / Portrait"]]} /></div>
+              <MediaEditor label="GALLERY IMAGE" media={frame.media} onChange={(v)=>patchGallery(index,frameIndex,'media',v)} positions={[["background","Frame"]]} />
+            </div>)}</div>
+
+            <div className="submodule-head"><div><span>SCROLL STORY</span><em>{(item.chapters || []).length} / 4 CHAPTERS</em></div><button className="mini-action" type="button" disabled={(item.chapters || []).length >= 4} onClick={()=>addChapter(index)}>+ ADD CHAPTER</button></div>
+            <div className="case-chapter-admin-list">{(item.chapters || []).map((chapter,chapterIndex) => <div className="case-chapter-admin" key={chapter.id || chapterIndex}>
+              <div className="case-module-toolbar"><span>CHAPTER {String(chapterIndex + 1).padStart(2,'0')}</span><div><button onClick={()=>moveChapter(index,chapterIndex,-1)}>↑</button><button onClick={()=>moveChapter(index,chapterIndex,1)}>↓</button><button className="danger-mini" onClick={()=>removeChapter(index,chapterIndex)}>×</button></div></div>
+              <div className="two-col"><Field label="LABEL" value={chapter.label || ''} onChange={(v)=>patchChapter(index,chapterIndex,'label',v)} /><Field label="TITLE" value={chapter.title || ''} onChange={(v)=>patchChapter(index,chapterIndex,'title',v)} /></div>
+              <Field label="BODY" textarea value={chapter.body || ''} onChange={(v)=>patchChapter(index,chapterIndex,'body',v)} />
+              <MediaEditor label="CHAPTER VISUAL / OPTIONAL" media={chapter.media} onChange={(v)=>patchChapter(index,chapterIndex,'media',v)} positions={[["background","Pinned visual"]]} />
+            </div>)}</div>
+
+            <div className="submodule-head"><div><span>ARCHITECTURE MAP</span><em>OPTIONAL / 6 NODES</em></div></div>
+            <div className="two-col"><Field label="MAP LABEL" value={item.architectureLabel || ''} onChange={(v)=>patch(index,'architectureLabel',v)} /><Field label="MAP HEADING" value={item.architectureHeading || ''} onChange={(v)=>patch(index,'architectureHeading',v)} /></div>
+            <Field label="MAP DESCRIPTION" textarea value={item.architectureBody || ''} onChange={(v)=>patch(index,'architectureBody',v)} />
+            <div className="architecture-node-admin-grid">{[0,1,2,3,4,5].map((nodeIndex) => <Field key={nodeIndex} label={`NODE ${String(nodeIndex + 1).padStart(2,'0')}`} value={item.architectureNodes?.[nodeIndex] || ''} onChange={(v)=>patchArchitectureNode(index,nodeIndex,v)} placeholder="API / CLOUD / DEVICE..." />)}</div>
+
+            <div className="submodule-head"><div><span>VERIFIED RESULTS</span><em>OPTIONAL / UP TO 3</em></div></div>
+            <div className="case-metric-admin-grid">{[0,1,2].map((metricIndex) => <div className="case-metric-admin" key={metricIndex}><span>METRIC {String(metricIndex + 1).padStart(2,'0')}</span><Field label="VALUE" value={item.metrics?.[metricIndex]?.value || ''} onChange={(v)=>patchMetric(index,metricIndex,'value',v)} placeholder="42%" /><Field label="LABEL" value={item.metrics?.[metricIndex]?.label || ''} onChange={(v)=>patchMetric(index,metricIndex,'label',v)} placeholder="Faster workflow" /></div>)}</div>
+          </div>
+          <Toggle label="Feature as large card" checked={item.featured} onChange={(v) => patch(index,'featured',v)} />
+        </>}
+        <button className="danger-button" onClick={() => remove(index)}>DELETE RECORD</button>
+      </div>
+    </section>)}</div>
   </>;
 }
 
