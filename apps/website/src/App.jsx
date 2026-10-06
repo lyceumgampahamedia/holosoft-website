@@ -164,7 +164,7 @@ function SiteChrome({ content, currentPath, children }) {
       <a className="mobile-command-cta" href={normalizeHref(content.site.headerCta?.href || '#contact', onHome)} onClick={() => setMenuOpen(false)}><span>{content.site.headerCta?.label || 'Start a project'}</span><b>INITIATE ↗</b></a>
     </aside>
     {children}
-    <footer className="site-footer section-shell"><div className="footer-brand"><BrandWordmark /><p>© {new Date().getFullYear()} // ALL SYSTEMS RESERVED</p></div><div className="footer-system"><span>HOLosoft / DIGITAL SYSTEMS</span><a href={`mailto:${content.site.contactEmail}`}>{content.site.contactEmail}</a></div><div className="footer-meta"><span>CONTENT V{content.meta?.version ?? 0}</span><span>{content.site.statusLabel}</span><a href="#top">RETURN / TOP ↑</a></div></footer>
+    <footer className="site-footer section-shell"><div className="footer-brand"><BrandWordmark /><p>© {new Date().getFullYear()} // ALL SYSTEMS RESERVED</p></div><div className="footer-system"><span>HOLOSOFT / DIGITAL SYSTEMS</span><a href={`mailto:${content.site.contactEmail}`}>{content.site.contactEmail}</a></div><div className="footer-meta"><span>CONTENT V{content.meta?.version ?? 0}</span><span>{content.site.statusLabel}</span><a href="#top">RETURN / TOP ↑</a></div></footer>
   </>;
 }
 
