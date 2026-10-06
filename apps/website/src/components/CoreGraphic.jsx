@@ -8,12 +8,16 @@ export default function CoreGraphic() {
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) return undefined;
-    const frame = () => {
+    let lastFrame = performance.now();
+    const frame = (time) => {
       const node = ref.current;
       if (!node) return;
+      const delta = Math.min(Math.max((time - lastFrame) / 1000, 0), 0.05);
+      lastFrame = time;
+      const ease = 1 - Math.exp(-8.5 * delta);
       const s = state.current;
-      s.x += (s.tx - s.x) * 0.075;
-      s.y += (s.ty - s.y) * 0.075;
+      s.x += (s.tx - s.x) * ease;
+      s.y += (s.ty - s.y) * ease;
       node.style.transform = `perspective(950px) rotateY(${s.x * 5.5}deg) rotateX(${s.y * -5.5}deg) translate3d(0,0,0)`;
       node.style.setProperty('--core-x', `${(s.x + 0.5) * 100}%`);
       node.style.setProperty('--core-y', `${(s.y + 0.5) * 100}%`);
