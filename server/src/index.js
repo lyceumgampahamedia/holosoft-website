@@ -69,9 +69,31 @@ app.use('/uploads', express.static(uploadDir, { maxAge: process.env.NODE_ENV ===
 async function readJson(file) {
   return JSON.parse(await fs.readFile(file, 'utf8'));
 }
+function slugify(value) {
+  return String(value || 'project').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'project';
+}
+function normalizeProject(project, index) {
+  const metrics = Array.isArray(project?.metrics) ? project.metrics.slice(0, 3) : [];
+  while (metrics.length < 3) metrics.push({ value: '', label: '' });
+  return {
+    ...project,
+    slug: project?.slug || slugify(project?.title || project?.id || `project-${index + 1}`),
+    caseStudyEnabled: project?.caseStudyEnabled !== false,
+    client: project?.client || '',
+    year: project?.year || '',
+    disciplines: project?.disciplines || '',
+    caseHeading: project?.caseHeading || '',
+    caseIntro: project?.caseIntro || '',
+    challenge: project?.challenge || '',
+    approach: project?.approach || '',
+    outcome: project?.outcome || '',
+    metrics: metrics.map((metric) => ({ value: metric?.value || '', label: metric?.label || '' }))
+  };
+}
 function normalizeContent(content) {
   return {
     ...content,
+    projects: Array.isArray(content.projects) ? content.projects.map(normalizeProject) : [],
     pages: Array.isArray(content.pages) ? content.pages : [],
     partners: Array.isArray(content.partners) ? content.partners : [],
     team: Array.isArray(content.team) ? content.team : [],
@@ -119,6 +141,9 @@ function validateContent(payload) {
   const slugs = payload.pages.map((page) => String(page.slug || '').trim()).filter(Boolean);
   if (slugs.length !== new Set(slugs).size) return 'Page slugs must be unique.';
   if (payload.pages.some((page) => !page.title || !page.slug)) return 'Every page needs a title and slug.';
+  const projectSlugs = payload.projects.map((project) => String(project.slug || '').trim()).filter(Boolean);
+  if (projectSlugs.length !== payload.projects.length) return 'Every project needs a case-study slug.';
+  if (projectSlugs.length !== new Set(projectSlugs).size) return 'Project case-study slugs must be unique.';
   if (payload.hero.headline.length < 1 || payload.hero.headline.length > 5) return 'Hero headline must contain 1–5 lines.';
   if (!payload.site.contactEmail) return 'A contact email is required.';
   return null;
