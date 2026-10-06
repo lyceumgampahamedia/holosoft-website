@@ -163,7 +163,31 @@ export const fallbackContent = {
         "alt": "",
         "position": "background",
         "fit": "cover"
-      }
+      },
+      "slug": "connected-ops",
+      "caseStudyEnabled": true,
+      "client": "",
+      "year": "",
+      "disciplines": "",
+      "caseHeading": "",
+      "caseIntro": "",
+      "challenge": "",
+      "approach": "",
+      "outcome": "",
+      "metrics": [
+        {
+          "value": "",
+          "label": ""
+        },
+        {
+          "value": "",
+          "label": ""
+        },
+        {
+          "value": "",
+          "label": ""
+        }
+      ]
     },
     {
       "id": "product-interface",
@@ -179,7 +203,31 @@ export const fallbackContent = {
         "alt": "",
         "position": "background",
         "fit": "cover"
-      }
+      },
+      "slug": "product-interface",
+      "caseStudyEnabled": true,
+      "client": "",
+      "year": "",
+      "disciplines": "",
+      "caseHeading": "",
+      "caseIntro": "",
+      "challenge": "",
+      "approach": "",
+      "outcome": "",
+      "metrics": [
+        {
+          "value": "",
+          "label": ""
+        },
+        {
+          "value": "",
+          "label": ""
+        },
+        {
+          "value": "",
+          "label": ""
+        }
+      ]
     },
     {
       "id": "automation-layer",
@@ -195,7 +243,31 @@ export const fallbackContent = {
         "alt": "",
         "position": "background",
         "fit": "cover"
-      }
+      },
+      "slug": "automation-layer",
+      "caseStudyEnabled": true,
+      "client": "",
+      "year": "",
+      "disciplines": "",
+      "caseHeading": "",
+      "caseIntro": "",
+      "challenge": "",
+      "approach": "",
+      "outcome": "",
+      "metrics": [
+        {
+          "value": "",
+          "label": ""
+        },
+        {
+          "value": "",
+          "label": ""
+        },
+        {
+          "value": "",
+          "label": ""
+        }
+      ]
     }
   ],
   "process": [
