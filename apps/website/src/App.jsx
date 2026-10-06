@@ -226,6 +226,90 @@ function ContactSection({ content }) {
   </section>;
 }
 
+function CaseGallery({ items = [] }) {
+  const gallery = items.filter((item) => item?.media?.src);
+  const [expanded, setExpanded] = useState(null);
+
+  useEffect(() => {
+    if (expanded === null) return undefined;
+    const close = (event) => { if (event.key === 'Escape') setExpanded(null); };
+    document.body.classList.add('case-lightbox-open');
+    window.addEventListener('keydown', close);
+    return () => {
+      document.body.classList.remove('case-lightbox-open');
+      window.removeEventListener('keydown', close);
+    };
+  }, [expanded]);
+
+  if (!gallery.length) return null;
+  const active = expanded === null ? null : gallery[expanded];
+  return <>
+    <section className="case-gallery section-shell">
+      <div className="case-gallery-head reveal"><div><span className="section-index">[ VISUAL / SYSTEM ]</span><p className="micro-label">PROJECT FRAMES</p></div><span>{String(gallery.length).padStart(2,'0')} / MEDIA NODES</span></div>
+      <div className="case-gallery-grid">{gallery.map((item,index) => <button className={`case-gallery-item reveal layout-${item.layout || 'wide'}`} type="button" onClick={() => setExpanded(index)} key={item.id || index}>
+        <Media media={item.media} className="case-gallery-media" />
+        <span className="case-gallery-caption"><b>{String(index + 1).padStart(2,'0')}</b><em>{item.caption || item.media.alt || 'PROJECT FRAME'}</em><i>EXPAND ↗</i></span>
+      </button>)}</div>
+    </section>
+    <div className={`case-lightbox ${active ? 'is-open' : ''}`} aria-hidden={!active} onClick={() => setExpanded(null)}>
+      <button className="case-lightbox-close" type="button" onClick={() => setExpanded(null)}>CLOSE ×</button>
+      {active && <div className="case-lightbox-stage" onClick={(event) => event.stopPropagation()}><Media media={active.media} className="case-lightbox-media" /><div className="case-lightbox-meta"><span>{String((expanded || 0) + 1).padStart(2,'0')} / {String(gallery.length).padStart(2,'0')}</span><p>{active.caption || active.media.alt || 'PROJECT FRAME'}</p></div></div>}
+    </div>
+  </>;
+}
+
+function CaseChapterExperience({ chapters = [] }) {
+  const items = chapters.filter((chapter) => chapter?.title || chapter?.body || chapter?.media?.src);
+  const [active, setActive] = useState(0);
+  const refs = useRef([]);
+
+  useEffect(() => {
+    if (!items.length) return undefined;
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter((entry) => entry.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible) {
+        const index = Number(visible.target.dataset.chapterIndex || 0);
+        setActive(index);
+      }
+    }, { threshold:[0.25,0.45,0.65], rootMargin:'-20% 0px -40% 0px' });
+    refs.current.forEach((node) => node && observer.observe(node));
+    return () => observer.disconnect();
+  }, [items.length]);
+
+  if (!items.length) return null;
+  const activeItem = items[Math.min(active,items.length - 1)] || items[0];
+  return <section className="case-chapters section-shell">
+    <div className="case-chapters-head reveal"><span className="section-index">[ SCROLL / STORY ]</span><div><p className="micro-label">SYSTEM JOURNEY</p><h2>Inside the build.</h2></div></div>
+    <div className="case-chapters-layout">
+      <div className="case-chapter-stage">
+        <div className="case-chapter-stage-inner">
+          <div className="case-chapter-stage-meta"><span>{String(active + 1).padStart(2,'0')} / {String(items.length).padStart(2,'0')}</span><strong>{activeItem.label || activeItem.title || 'PROJECT SYSTEM'}</strong></div>
+          <div className="case-chapter-visual">{activeItem.media?.src ? <Media media={activeItem.media} className="case-chapter-media" /> : <div className="case-chapter-placeholder"><img src={appAsset('holosoft-mark.svg')} alt="" /><span>VISUAL NODE / OPTIONAL</span></div>}</div>
+        </div>
+      </div>
+      <div className="case-chapter-copy">{items.map((chapter,index) => <article className={`case-chapter reveal ${active === index ? 'is-active' : ''}`} data-chapter-index={index} ref={(node) => { refs.current[index] = node; }} key={chapter.id || index}>
+        <div className="case-chapter-index"><span>{String(index + 1).padStart(2,'0')}</span><i /></div>
+        <p className="micro-label">{chapter.label || `CHAPTER / ${String(index + 1).padStart(2,'0')}`}</p>
+        <h3>{chapter.title || 'Project chapter'}</h3>
+        <div>{String(chapter.body || '').split('\n').map((line,lineIndex) => line ? <p key={lineIndex}>{line}</p> : <br key={lineIndex} />)}</div>
+      </article>)}</div>
+    </div>
+  </section>;
+}
+
+function CaseArchitecture({ project }) {
+  const nodes = (project.architectureNodes || []).map((node) => String(node || '').trim()).filter(Boolean).slice(0,6);
+  if (!nodes.length && !project.architectureHeading && !project.architectureBody) return null;
+  return <section className="case-architecture section-shell">
+    <div className="case-architecture-copy reveal"><span className="section-index">[ ARCHITECTURE / MAP ]</span><p className="micro-label">{project.architectureLabel || 'CONNECTED SYSTEM'}</p><h2>{project.architectureHeading || 'One connected operating layer.'}</h2>{project.architectureBody && <p>{project.architectureBody}</p>}</div>
+    <div className="case-architecture-map reveal">
+      <div className="architecture-core"><span className="architecture-ring architecture-ring-a" /><span className="architecture-ring architecture-ring-b" /><img src={appAsset('holosoft-mark.svg')} alt="" /><b>HOLOSOFT<br/>CORE</b></div>
+      <div className="architecture-lines" aria-hidden="true">{nodes.map((_,index) => <i style={{ '--architecture-angle': `${-90 + (360 / Math.max(nodes.length,1)) * index}deg` }} key={index} />)}</div>
+      {nodes.map((node,index) => <div className="architecture-node" style={{ '--architecture-angle': `${-90 + (360 / Math.max(nodes.length,1)) * index}deg` }} key={`${node}-${index}`}><span>{String(index + 1).padStart(2,'0')}</span><strong>{node}</strong></div>)}
+    </div>
+  </section>;
+}
+
 function ProjectCaseStudy({ project, content }) {
   const metrics = (project.metrics || []).filter((metric) => metric?.value || metric?.label);
   const story = [
@@ -241,6 +325,7 @@ function ProjectCaseStudy({ project, content }) {
           <p className="eyebrow reveal">HOLOSOFT / CASE STUDY</p>
           <h1 className="reveal">{project.title}</h1>
           <p className="case-hero-intro reveal">{project.description}</p>
+          <span className="case-scroll-cue reveal">SCROLL / EXPLORE <i>↓</i></span>
         </div>
         <div className="case-orbit-card reveal">
           <span>PROJECT NODE</span><strong>{project.code}</strong><i>{project.year || 'ACTIVE SYSTEM'}</i>
@@ -257,7 +342,10 @@ function ProjectCaseStudy({ project, content }) {
       <div className="section-index reveal">[ SYSTEM / OVERVIEW ]</div>
       <div className="case-overview-copy reveal"><p className="micro-label">THE BRIEF</p><h2>{project.caseHeading || 'A system designed around the work, not around the software.'}</h2><p>{project.caseIntro || project.description}</p></div>
     </section>
+    <CaseGallery items={project.gallery || []} />
     {story.length > 0 && <section className="case-story section-shell">{story.map(([no, label, body]) => <article className="case-story-row reveal" key={label}><span className="case-story-no">{no}</span><p className="micro-label">{label}</p><div>{String(body).split('\n').map((line,index) => line ? <p key={index}>{line}</p> : <br key={index} />)}</div></article>)}</section>}
+    <CaseChapterExperience chapters={project.chapters || []} />
+    <CaseArchitecture project={project} />
     {metrics.length > 0 && <section className="case-metrics section-shell"><div className="case-metrics-head reveal"><span className="section-index">[ VERIFIED / RESULTS ]</span><p>Only published project metrics appear here.</p></div><div className="case-metrics-grid">{metrics.map((metric,index) => <div className="case-metric reveal" key={`${metric.label}-${index}`}><strong>{metric.value}</strong><span>{metric.label}</span></div>)}</div></section>}
     <section className="case-next section-shell reveal"><p className="micro-label">NEXT CONNECTION</p><h2>Have a system that needs this level of thinking?</h2><a className="cta-link" href={`mailto:${content.site.contactEmail}`}><span>{content.contact?.ctaLabel || content.site.contactEmail}</span><span>↗</span></a></section>
   </main>;
