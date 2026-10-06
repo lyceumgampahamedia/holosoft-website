@@ -200,7 +200,13 @@ function HomePage({ content, apiState }) {
 
     <section className="services section-shell" id="services">
       <SectionHead index="02 / CAPABILITIES" label={content.sections?.services?.label} heading={content.sections?.services?.heading} media={content.sections?.services?.media} />
-      <div className="service-list">{content.services.map((service) => <article className={`service-row reveal ${service.media?.src ? 'has-item-media' : ''}`} key={service.id}><div className="service-no">{service.no}</div><h3>{service.title}</h3><p>{service.description}</p><span className="service-tag">{service.tag}</span>{service.media?.src && <Media media={service.media} className="service-row-media" decorative={!service.media.alt} />}<span className="row-arrow">↗</span></article>)}</div>
+      <div className="service-list">{content.services.map((service) => {
+        const rowBody = <><div className="service-no">{service.no}</div><h3>{service.title}</h3><p>{service.description}</p><span className="service-tag">{service.tag}</span>{service.media?.src && <Media media={service.media} className="service-row-media" decorative={!service.media.alt} />}{service.href && <span className="row-arrow">↗</span>}</>;
+        const className = `service-row reveal ${service.media?.src ? 'has-item-media' : ''} ${service.href ? 'is-linked' : ''}`;
+        if (!service.href) return <article className={className} key={service.id}>{rowBody}</article>;
+        const external = /^(https?:)?\/\//i.test(service.href);
+        return <a className={className} href={normalizeHref(service.href, true)} target={service.linkNewTab ? '_blank' : undefined} rel={service.linkNewTab || external ? 'noreferrer' : undefined} key={service.id}>{rowBody}</a>;
+      })}</div>
     </section>
 
     <section className="work section-shell" id="work">
