@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 const asset = (name) => `${import.meta.env.BASE_URL || '/'}assets/${name}`;
 
-export default function CoreGraphic() {
+export default function CoreGraphic({ services = [] }) {
   const ref = useRef(null);
+  const [activeNode, setActiveNode] = useState(null);
   const state = useRef({ tx: 0, ty: 0, x: 0, y: 0, active: false, raf: 0 });
 
   useEffect(() => {
@@ -41,15 +42,23 @@ export default function CoreGraphic() {
   };
 
   return (
-    <div className="core-stage" ref={ref} onPointerMove={move} onPointerLeave={reset}>
+    <div className={`core-stage ${activeNode !== null ? 'has-active-node' : ''}`} ref={ref} onPointerMove={move} onPointerLeave={() => { reset(); setActiveNode(null); }}>
       <div className="core-energy" />
       <div className="core-ring ring-a" /><div className="core-ring ring-b" /><div className="core-ring ring-c" />
+      <div className="core-system-nodes" aria-label="Holosoft capability system">
+        {services.slice(0,6).map((service, index, list) => {
+          const angle = -90 + (360 / Math.max(list.length, 1)) * index;
+          return <a className={`core-system-node ${activeNode === index ? 'is-active' : ''}`} href="#services" style={{ '--node-angle': `${angle}deg` }} onPointerEnter={() => setActiveNode(index)} onFocus={() => setActiveNode(index)} onBlur={() => setActiveNode(null)} key={service.id || service.title}>
+            <span className="core-node-dot" /><span className="core-node-name">{service.title}</span>
+          </a>;
+        })}
+      </div>
       <div className="core-logo-stack">
         <img className="core-logo core-logo-mono" src={asset('holosoft-mark-mono.svg')} alt="" />
         <img className="core-logo core-logo-color" src={asset('holosoft-mark.svg')} alt="" />
       </div>
       <div className="axis axis-x" /><div className="axis axis-y" />
-      <span className="core-label label-a">NODE_01</span><span className="core-label label-b">CORE ONLINE</span><span className="core-label label-c">00.0001ms</span>
+      <span className="core-label label-a">NODE_01</span><span className="core-label label-b">{activeNode !== null ? `ACTIVE / ${services[activeNode]?.title?.toUpperCase() || 'SYSTEM'}` : 'CORE ONLINE'}</span><span className="core-label label-c">00.0001ms</span>
     </div>
   );
 }
