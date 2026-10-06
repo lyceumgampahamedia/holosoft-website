@@ -77,7 +77,7 @@ function normalizeProject(project, index) {
   while (metrics.length < 3) metrics.push({ value: '', label: '' });
   return {
     ...project,
-    slug: project?.slug || slugify(project?.title || project?.id || `project-${index + 1}`),
+    slug: project?.slug || slugify(project?.id || project?.title || `project-${index + 1}`),
     caseStudyEnabled: project?.caseStudyEnabled !== false,
     client: project?.client || '',
     year: project?.year || '',
