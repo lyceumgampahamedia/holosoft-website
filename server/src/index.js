@@ -25,6 +25,12 @@ const allowedOrigins = new Set([...localOrigins, ...configuredOrigins]);
 const sessions = new Map();
 const loginAttempts = new Map();
 const app = express();
+const sessionCleanup = setInterval(() => {
+  const now = Date.now();
+  for (const [token, session] of sessions) if (session.expiresAt < now) sessions.delete(token);
+  for (const [key, attempt] of loginAttempts) if (attempt.resetAt < now) loginAttempts.delete(key);
+}, 60 * 60 * 1000);
+sessionCleanup.unref?.();
 
 async function pathExists(file) {
   try { await fs.access(file); return true; }
@@ -55,6 +61,9 @@ app.use((_req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Referrer-Policy', 'no-referrer');
   res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  if (process.env.NODE_ENV === 'production') res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   next();
 });
 app.use(cors({
@@ -68,6 +77,11 @@ app.use('/uploads', express.static(uploadDir, { maxAge: process.env.NODE_ENV ===
 
 async function readJson(file) {
   return JSON.parse(await fs.readFile(file, 'utf8'));
+}
+async function writeJsonAtomic(file, value) {
+  const temp = `${file}.${process.pid}.${Date.now()}.tmp`;
+  await fs.writeFile(temp, JSON.stringify(value, null, 2));
+  await fs.rename(temp, file);
 }
 function slugify(value) {
   return String(value || 'project').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'project';
@@ -182,7 +196,9 @@ async function createRevision(content) {
   await fs.mkdir(historyDir, { recursive: true });
   const stamp = new Date().toISOString().replace(/[:.]/g, '-');
   const revision = path.join(historyDir, `${stamp}-v${content.meta?.version || 0}.json`);
-  await fs.writeFile(revision, JSON.stringify(content, null, 2));
+  await writeJsonAtomic(revision, content);
+  const revisions = (await fs.readdir(historyDir)).filter((name) => name.endsWith('.json')).sort().reverse();
+  await Promise.all(revisions.slice(50).map((name) => fs.unlink(path.join(historyDir, name)).catch(() => {})));
 }
 function safeRevisionName(name) {
   return path.basename(name) === name && /^[0-9TZ-]+-v\d+\.json$/.test(name);
@@ -261,7 +277,7 @@ app.put('/api/admin/draft', requireAuth, async (req, res, next) => {
         updatedBy: 'cms-admin'
       }
     };
-    await fs.writeFile(draftPath, JSON.stringify(nextDraft, null, 2));
+    await writeJsonAtomic(draftPath, nextDraft);
     res.json(adminPayload(nextDraft, published));
   } catch (error) { next(error); }
 });
@@ -285,8 +301,8 @@ app.post('/api/admin/publish', requireAuth, async (req, res, next) => {
       }
     };
     await Promise.all([
-      fs.writeFile(contentPath, JSON.stringify(nextPublished, null, 2)),
-      fs.writeFile(draftPath, JSON.stringify(nextPublished, null, 2))
+      writeJsonAtomic(contentPath, nextPublished),
+      writeJsonAtomic(draftPath, nextPublished)
     ]);
     res.json(adminPayload(nextPublished, nextPublished));
   } catch (error) { next(error); }
@@ -346,8 +362,8 @@ app.post('/api/admin/revisions/:name/restore', requireAuth, async (req, res, nex
       }
     };
     await Promise.all([
-      fs.writeFile(contentPath, JSON.stringify(nextPublished, null, 2)),
-      fs.writeFile(draftPath, JSON.stringify(nextPublished, null, 2))
+      writeJsonAtomic(contentPath, nextPublished),
+      writeJsonAtomic(draftPath, nextPublished)
     ]);
     res.json(adminPayload(nextPublished, nextPublished));
   } catch (error) {
