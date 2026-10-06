@@ -75,6 +75,9 @@ function slugify(value) {
 function normalizeProject(project, index) {
   const metrics = Array.isArray(project?.metrics) ? project.metrics.slice(0, 3) : [];
   while (metrics.length < 3) metrics.push({ value: '', label: '' });
+  const gallery = Array.isArray(project?.gallery) ? project.gallery.slice(0, 6) : [];
+  const chapters = Array.isArray(project?.chapters) ? project.chapters.slice(0, 4) : [];
+  const architectureNodes = Array.isArray(project?.architectureNodes) ? project.architectureNodes.slice(0, 6) : [];
   return {
     ...project,
     slug: project?.slug || slugify(project?.id || project?.title || `project-${index + 1}`),
@@ -87,7 +90,24 @@ function normalizeProject(project, index) {
     challenge: project?.challenge || '',
     approach: project?.approach || '',
     outcome: project?.outcome || '',
-    metrics: metrics.map((metric) => ({ value: metric?.value || '', label: metric?.label || '' }))
+    metrics: metrics.map((metric) => ({ value: metric?.value || '', label: metric?.label || '' })),
+    gallery: gallery.map((item, galleryIndex) => ({
+      id: item?.id || `gallery-${galleryIndex + 1}`,
+      caption: item?.caption || '',
+      layout: ['wide','half','tall'].includes(item?.layout) ? item.layout : 'wide',
+      media: { src:'', alt:'', position:'background', fit:'cover', ...(item?.media || {}) }
+    })),
+    chapters: chapters.map((item, chapterIndex) => ({
+      id: item?.id || `chapter-${chapterIndex + 1}`,
+      label: item?.label || '',
+      title: item?.title || '',
+      body: item?.body || '',
+      media: { src:'', alt:'', position:'background', fit:'cover', ...(item?.media || {}) }
+    })),
+    architectureLabel: project?.architectureLabel || '',
+    architectureHeading: project?.architectureHeading || '',
+    architectureBody: project?.architectureBody || '',
+    architectureNodes
   };
 }
 function normalizeContent(content) {
@@ -144,6 +164,11 @@ function validateContent(payload) {
   const projectSlugs = payload.projects.map((project) => String(project.slug || '').trim()).filter(Boolean);
   if (projectSlugs.length !== payload.projects.length) return 'Every project needs a case-study slug.';
   if (projectSlugs.length !== new Set(projectSlugs).size) return 'Project case-study slugs must be unique.';
+  if (payload.projects.some((project) => project.gallery && !Array.isArray(project.gallery))) return 'Project galleries must be arrays.';
+  if (payload.projects.some((project) => Array.isArray(project.gallery) && project.gallery.length > 6)) return 'Project galleries support up to 6 frames.';
+  if (payload.projects.some((project) => project.chapters && !Array.isArray(project.chapters))) return 'Project chapters must be arrays.';
+  if (payload.projects.some((project) => Array.isArray(project.chapters) && project.chapters.length > 4)) return 'Project chapters support up to 4 entries.';
+  if (payload.projects.some((project) => project.architectureNodes && (!Array.isArray(project.architectureNodes) || project.architectureNodes.length > 6))) return 'Project architecture supports up to 6 nodes.';
   if (payload.hero.headline.length < 1 || payload.hero.headline.length > 5) return 'Hero headline must contain 1–5 lines.';
   if (!payload.site.contactEmail) return 'A contact email is required.';
   return null;
