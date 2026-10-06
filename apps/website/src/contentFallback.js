@@ -187,7 +187,13 @@ export const fallbackContent = {
           "value": "",
           "label": ""
         }
-      ]
+      ],
+      "gallery": [],
+      "chapters": [],
+      "architectureLabel": "",
+      "architectureHeading": "",
+      "architectureBody": "",
+      "architectureNodes": []
     },
     {
       "id": "product-interface",
@@ -227,7 +233,13 @@ export const fallbackContent = {
           "value": "",
           "label": ""
         }
-      ]
+      ],
+      "gallery": [],
+      "chapters": [],
+      "architectureLabel": "",
+      "architectureHeading": "",
+      "architectureBody": "",
+      "architectureNodes": []
     },
     {
       "id": "automation-layer",
@@ -267,7 +279,13 @@ export const fallbackContent = {
           "value": "",
           "label": ""
         }
-      ]
+      ],
+      "gallery": [],
+      "chapters": [],
+      "architectureLabel": "",
+      "architectureHeading": "",
+      "architectureBody": "",
+      "architectureNodes": []
     }
   ],
   "process": [
