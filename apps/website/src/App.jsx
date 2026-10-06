@@ -29,7 +29,15 @@ function useReveal(dependency) {
 }
 
 const APP_BASE = import.meta.env.BASE_URL || '/';
+const SITE_URL = (import.meta.env.VITE_WEBSITE_URL || `${window.location.origin}${APP_BASE}`).replace(/\/$/, '');
 const appAsset = (name) => `${APP_BASE}assets/${name}`;
+const absoluteUrl = (value = '') => {
+  if (!value) return `${SITE_URL}/assets/holosoft-mark.svg`;
+  if (/^https?:\/\//i.test(value)) return value;
+  if (value.startsWith('/uploads/')) return resolveMedia(value);
+  try { return new URL(value.replace(/^\//,''), `${SITE_URL}/`).href; }
+  catch { return value; }
+};
 const appHref = (href = '/') => {
   if (/^(https?:|mailto:|tel:)/i.test(href)) return href;
   if (href.startsWith('#')) return href;
@@ -69,14 +77,45 @@ function resolveMedia(src) {
   return src;
 }
 
-function Media({ media, className = '', decorative = false }) {
+function Media({ media, className = '', decorative = false, priority = false }) {
   const src = resolveMedia(media?.src);
   if (!src) return null;
   const position = media?.position || 'right';
   return <figure className={`section-media media-${position} ${className}`.trim()} aria-hidden={decorative ? 'true' : undefined}>
-    <img src={src} alt={decorative ? '' : (media?.alt || '')} style={{ objectFit: media?.fit || 'cover' }} />
+    <img src={src} alt={decorative ? '' : (media?.alt || '')} style={{ objectFit: media?.fit || 'cover' }} loading={priority ? 'eager' : 'lazy'} fetchPriority={priority ? 'high' : 'auto'} decoding="async" />
     <span className="media-scan" aria-hidden="true" />
   </figure>;
+}
+
+function ScrollSystem({ currentPath }) {
+  const [progress, setProgress] = useState(0);
+  const [label, setLabel] = useState(currentPath === '/' ? 'HOME' : currentPath.replace(/^\//,'').toUpperCase());
+
+  useEffect(() => {
+    let raf = 0;
+    const update = () => {
+      const root = document.documentElement;
+      const max = Math.max(1, root.scrollHeight - window.innerHeight);
+      setProgress(Math.max(0, Math.min(1, window.scrollY / max)));
+      if (currentPath === '/') {
+        const sections = [...document.querySelectorAll('main section[id]')];
+        const active = sections.filter((section) => section.getBoundingClientRect().top <= Math.min(220, window.innerHeight * .28)).at(-1);
+        setLabel((active?.id || 'home').toUpperCase());
+      }
+      raf = 0;
+    };
+    const schedule = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener('scroll', schedule, { passive:true });
+    window.addEventListener('resize', schedule, { passive:true });
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+    };
+  }, [currentPath]);
+
+  return <div className="scroll-system" aria-hidden="true"><span className="scroll-system-label">{label}</span><span className="scroll-system-track"><i style={{ transform:`scaleX(${progress})` }} /></span><span className="scroll-system-percent">{String(Math.round(progress * 100)).padStart(3,'0')}%</span></div>;
 }
 
 function SiteChrome({ content, currentPath, children }) {
@@ -104,10 +143,12 @@ function SiteChrome({ content, currentPath, children }) {
   }, [menuOpen]);
 
   return <>
+    <a className="skip-link" href="#main-content">SKIP TO CONTENT</a>
+    <ScrollSystem currentPath={currentPath} />
     <div className="noise" aria-hidden="true" /><div className="scanline" aria-hidden="true" />
     <header className="site-header" id="top">
       <a className="brand" href={APP_BASE} aria-label="Holosoft home" onClick={() => setMenuOpen(false)}><BrandWordmark /></a>
-      <nav className="desktop-nav">{navItems.map((item) => <a key={`${item.label}-${item.href}`} className={currentPath === item.href ? 'is-current' : ''} href={normalizeHref(item.href, onHome)}>{item.label}</a>)}</nav>
+      <nav className="desktop-nav" aria-label="Primary navigation">{navItems.map((item) => <a key={`${item.label}-${item.href}`} className={currentPath === item.href ? 'is-current' : ''} aria-current={currentPath === item.href ? 'page' : undefined} href={normalizeHref(item.href, onHome)}>{item.label}</a>)}</nav>
       <a className="header-cta" href={normalizeHref(content.site.headerCta?.href || '#contact', onHome)}><span>{content.site.headerCta?.label || 'Start a project'}</span><span>↗</span></a>
       <button className={`mobile-menu-button ${menuOpen ? 'is-open' : ''}`} type="button" aria-expanded={menuOpen} aria-controls="mobile-command-menu" aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} onClick={() => setMenuOpen((value) => !value)}>
         <span /><span /><b>{menuOpen ? 'CLOSE' : 'MENU'}</b>
@@ -123,7 +164,7 @@ function SiteChrome({ content, currentPath, children }) {
       <a className="mobile-command-cta" href={normalizeHref(content.site.headerCta?.href || '#contact', onHome)} onClick={() => setMenuOpen(false)}><span>{content.site.headerCta?.label || 'Start a project'}</span><b>INITIATE ↗</b></a>
     </aside>
     {children}
-    <footer className="site-footer section-shell"><div className="footer-brand"><BrandWordmark /><p>© {new Date().getFullYear()} // ALL SYSTEMS RESERVED</p></div><div className="footer-meta"><span>CONTENT V{content.meta?.version ?? 0}</span><span>{content.site.statusLabel}</span><a href="#top">RETURN / TOP ↑</a></div></footer>
+    <footer className="site-footer section-shell"><div className="footer-brand"><BrandWordmark /><p>© {new Date().getFullYear()} // ALL SYSTEMS RESERVED</p></div><div className="footer-system"><span>HOLosoft / DIGITAL SYSTEMS</span><a href={`mailto:${content.site.contactEmail}`}>{content.site.contactEmail}</a></div><div className="footer-meta"><span>CONTENT V{content.meta?.version ?? 0}</span><span>{content.site.statusLabel}</span><a href="#top">RETURN / TOP ↑</a></div></footer>
   </>;
 }
 
@@ -173,9 +214,9 @@ function ProjectCard({ project }) {
 function HomePage({ content, apiState }) {
   const tickerItems = useMemo(() => content.services?.map((service) => service.title.toUpperCase()) || [], [content.services]);
   const heroMedia = content.hero?.media;
-  return <main>
+  return <main id="main-content">
     <section className={`hero section-shell ${heroMedia?.src ? 'has-hero-media' : ''}`}>
-      {heroMedia?.src && heroMedia.position === 'background' && <Media media={heroMedia} className="hero-media-background" decorative />}
+      {heroMedia?.src && heroMedia.position === 'background' && <Media media={heroMedia} className="hero-media-background" decorative priority />}
       <div className="hero-meta reveal"><span className="status-dot" /><span>{content.hero.metaLeft}</span><span>{content.hero.metaRight}</span><span className="content-state">{apiState}</span></div>
       <div className="hero-grid">
         <div className="hero-copy">
@@ -183,9 +224,9 @@ function HomePage({ content, apiState }) {
           <h1 className="reveal">{content.hero.headline.map((line, i) => <span key={`${line}-${i}`} className={i === Number(content.hero.outlineIndex) ? 'outline' : ''}>{line}</span>)}</h1>
           <p className="hero-intro reveal">{content.hero.intro}</p>
           <div className="hero-actions reveal"><a className="button button-solid" href={content.hero.primaryCta.href}>{content.hero.primaryCta.label}<span>↓</span></a><a className="button button-ghost" href={content.hero.secondaryCta.href}>{content.hero.secondaryCta.label}<span>↗</span></a></div>
-          {heroMedia?.src && heroMedia.position === 'left' && <Media media={heroMedia} className="hero-inline-media reveal" />}
+          {heroMedia?.src && heroMedia.position === 'left' && <Media media={heroMedia} className="hero-inline-media reveal" priority />}
         </div>
-        <div className="hero-core reveal">{heroMedia?.src && heroMedia.position === 'right' && <Media media={heroMedia} className="hero-core-media" />}<CoreGraphic services={content.services} /></div>
+        <div className="hero-core reveal">{heroMedia?.src && heroMedia.position === 'right' && <Media media={heroMedia} className="hero-core-media" priority />}<CoreGraphic services={content.services} /></div>
       </div>
       <div className="hero-ticker reveal"><div className="ticker-track">{[...tickerItems, ...tickerItems].map((item, i) => <span key={`${item}-${i}`}>{item}<i>◇</i></span>)}</div></div>
     </section>
@@ -226,9 +267,22 @@ function HomePage({ content, apiState }) {
 
 function ContactSection({ content }) {
   const media = content.contact?.media;
+  const [copyState, setCopyState] = useState('COPY EMAIL');
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(content.site.contactEmail);
+      setCopyState('COPIED ✓');
+    } catch {
+      setCopyState('COPY FAILED');
+    }
+    window.setTimeout(() => setCopyState('COPY EMAIL'), 1700);
+  };
   return <section className={`cta section-shell ${media?.src ? 'has-contact-media' : ''}`} id="contact">
     {media?.src && <Media media={media} className="contact-section-media reveal" decorative={media.position === 'background'} />}
-    <span className="cta-core-stack" aria-hidden="true"><img className="cta-core cta-core-mono" src={appAsset('holosoft-mark-mono.svg')} alt="" /><img className="cta-core cta-core-color" src={appAsset('holosoft-mark.svg')} alt="" /></span><p className="micro-label reveal">{content.contact.label}</p><h2 className="reveal">{content.contact.heading}</h2><p className="cta-sub reveal">{content.contact.subheading}</p><a className="cta-link reveal" href={`mailto:${content.site.contactEmail}`}><span>{content.contact.ctaLabel || content.site.contactEmail}</span><span>↗</span></a>
+    <span className="cta-core-stack" aria-hidden="true"><img className="cta-core cta-core-mono" src={appAsset('holosoft-mark-mono.svg')} alt="" /><img className="cta-core cta-core-color" src={appAsset('holosoft-mark.svg')} alt="" /></span>
+    <div className="contact-system-meta reveal"><span>DIRECT CHANNEL</span><i>● {content.site.statusLabel || 'SYSTEMS ONLINE'}</i></div>
+    <p className="micro-label reveal">{content.contact.label}</p><h2 className="reveal">{content.contact.heading}</h2><p className="cta-sub reveal">{content.contact.subheading}</p>
+    <div className="contact-action-grid reveal"><a className="cta-link" href={`mailto:${content.site.contactEmail}`}><span>{content.contact.ctaLabel || content.site.contactEmail}</span><span>↗</span></a><button className="contact-copy" type="button" onClick={copyEmail}><span>{content.site.contactEmail}</span><b>{copyState}</b></button></div>
   </section>;
 }
 
@@ -317,13 +371,17 @@ function CaseArchitecture({ project }) {
 }
 
 function ProjectCaseStudy({ project, content }) {
+  const caseProjects = (content.projects || []).filter((item) => item.published !== false && item.caseStudyEnabled !== false);
+  const currentProjectIndex = caseProjects.findIndex((item) => (item.slug || item.id) === (project.slug || project.id));
+  const previousProject = currentProjectIndex > 0 ? caseProjects[currentProjectIndex - 1] : null;
+  const nextProject = currentProjectIndex >= 0 && currentProjectIndex < caseProjects.length - 1 ? caseProjects[currentProjectIndex + 1] : null;
   const metrics = (project.metrics || []).filter((metric) => metric?.value || metric?.label);
   const story = [
     ['01', 'CHALLENGE', project.challenge],
     ['02', 'APPROACH', project.approach],
     ['03', 'OUTCOME', project.outcome]
   ].filter(([, , body]) => body);
-  return <main className="case-study">
+  return <main id="main-content" className="case-study">
     <section className="case-hero section-shell">
       <div className="case-hero-meta reveal"><a href={`${APP_BASE}#work`}>← SELECTED WORK</a><span>{project.code} / {project.type}</span></div>
       <div className="case-hero-grid">
@@ -335,7 +393,7 @@ function ProjectCaseStudy({ project, content }) {
         </div>
         <div className="case-orbit-card reveal">
           <span>PROJECT NODE</span><strong>{project.code}</strong><i>{project.year || 'ACTIVE SYSTEM'}</i>
-          <div className="case-orbit-visual">{project.media?.src ? <Media media={project.media} className="case-hero-media" /> : <ProjectVisual type={project.visual} />}</div>
+          <div className="case-orbit-visual">{project.media?.src ? <Media media={project.media} className="case-hero-media" priority /> : <ProjectVisual type={project.visual} />}</div>
         </div>
       </div>
       <div className="case-facts reveal">
@@ -353,17 +411,22 @@ function ProjectCaseStudy({ project, content }) {
     <CaseChapterExperience chapters={project.chapters || []} />
     <CaseArchitecture project={project} />
     {metrics.length > 0 && <section className="case-metrics section-shell"><div className="case-metrics-head reveal"><span className="section-index">[ VERIFIED / RESULTS ]</span><p>Only published project metrics appear here.</p></div><div className="case-metrics-grid">{metrics.map((metric,index) => <div className="case-metric reveal" key={`${metric.label}-${index}`}><strong>{metric.value}</strong><span>{metric.label}</span></div>)}</div></section>}
+    <nav className="case-project-nav section-shell reveal" aria-label="Case study navigation">
+      <a className="case-project-all" href={`${APP_BASE}#work`}><span>ALL WORK</span><strong>SELECTED SYSTEMS</strong></a>
+      {previousProject ? <a className="case-project-direction previous" href={appHref(`/work/${previousProject.slug || previousProject.id}`)}><span>← PREVIOUS</span><strong>{previousProject.title}</strong></a> : <span className="case-project-direction is-empty" />}
+      {nextProject ? <a className="case-project-direction next" href={appHref(`/work/${nextProject.slug || nextProject.id}`)}><span>NEXT →</span><strong>{nextProject.title}</strong></a> : <a className="case-project-direction next" href={`${APP_BASE}#work`}><span>BACK TO</span><strong>ALL WORK</strong></a>}
+    </nav>
     <section className="case-next section-shell reveal"><p className="micro-label">NEXT CONNECTION</p><h2>Have a system that needs this level of thinking?</h2><a className="cta-link" href={`mailto:${content.site.contactEmail}`}><span>{content.contact?.ctaLabel || content.site.contactEmail}</span><span>↗</span></a></section>
   </main>;
 }
 
 function DynamicPage({ page, content }) {
-  return <main className="dynamic-page">
+  return <main id="main-content" className="dynamic-page">
     <section className={`page-hero section-shell ${page.media?.src ? 'has-page-media' : ''}`}>
-      {page.media?.src && page.media.position === 'background' && <Media media={page.media} className="page-hero-backdrop" decorative />}
+      {page.media?.src && page.media.position === 'background' && <Media media={page.media} className="page-hero-backdrop" decorative priority />}
       <div className="page-hero-grid">
-        <div>{page.media?.src && page.media.position === 'left' && <Media media={page.media} className="page-hero-inline reveal" />}<p className="eyebrow reveal">{page.eyebrow || 'HOLOSOFT / PAGE NODE'}</p><h1 className="reveal">{page.heading || page.title}</h1><p className="page-intro reveal">{page.intro}</p></div>
-        <div className="page-system-card reveal">{page.media?.src && page.media.position === 'right' ? <Media media={page.media} className="page-system-media" /> : <><span>PAGE_NODE</span><strong>/{page.slug}</strong><i>LIVE / V{content.meta?.version ?? 0}</i><div className="page-orbit"><img src={appAsset('holosoft-mark.svg')} alt="" /></div></>}</div>
+        <div>{page.media?.src && page.media.position === 'left' && <Media media={page.media} className="page-hero-inline reveal" priority />}<p className="eyebrow reveal">{page.eyebrow || 'HOLOSOFT / PAGE NODE'}</p><h1 className="reveal">{page.heading || page.title}</h1><p className="page-intro reveal">{page.intro}</p></div>
+        <div className="page-system-card reveal">{page.media?.src && page.media.position === 'right' ? <Media media={page.media} className="page-system-media" priority /> : <><span>PAGE_NODE</span><strong>/{page.slug}</strong><i>LIVE / V{content.meta?.version ?? 0}</i><div className="page-orbit"><img src={appAsset('holosoft-mark.svg')} alt="" /></div></>}</div>
       </div>
     </section>
     <section className="page-blocks section-shell">
@@ -378,7 +441,7 @@ function DynamicPage({ page, content }) {
 }
 
 function NotFound({ content }) {
-  return <main className="dynamic-page"><section className="page-hero section-shell"><div className="page-hero-grid"><div><p className="eyebrow reveal">ERR / ROUTE NOT FOUND</p><h1 className="reveal">404.<br/>UNKNOWN NODE.</h1><p className="page-intro reveal">The requested Holosoft page is not published or does not exist.</p><a className="button button-solid reveal" href={APP_BASE}>RETURN HOME <span>↗</span></a></div><div className="page-system-card reveal"><span>ROUTE_STATE</span><strong>OFFLINE</strong><i>RECOVER / HOME</i><div className="page-orbit"><img src={appAsset('holosoft-mark.svg')} alt="" /></div></div></div></section><ContactSection content={content} /></main>;
+  return <main id="main-content" className="dynamic-page"><section className="page-hero section-shell"><div className="page-hero-grid"><div><p className="eyebrow reveal">ERR / ROUTE NOT FOUND</p><h1 className="reveal">404.<br/>UNKNOWN NODE.</h1><p className="page-intro reveal">The requested Holosoft page is not published or does not exist.</p><a className="button button-solid reveal" href={APP_BASE}>RETURN HOME <span>↗</span></a></div><div className="page-system-card reveal"><span>ROUTE_STATE</span><strong>OFFLINE</strong><i>RECOVER / HOME</i><div className="page-orbit"><img src={appAsset('holosoft-mark.svg')} alt="" /></div></div></div></section><ContactSection content={content} /></main>;
 }
 
 export default function App() {
@@ -496,12 +559,67 @@ export default function App() {
   useEffect(() => {
     const page = currentPath === '/' ? null : (content.pages || []).find((item) => item.published !== false && `/${item.slug}` === currentPath);
     const caseProject = currentPath.startsWith('/work/') ? (content.projects || []).find((item) => `/work/${item.slug || item.id}` === currentPath) : null;
-    document.title = caseProject ? `${caseProject.title} — Holosoft Case Study` : page?.seoTitle || page?.title || content.site?.title || fallbackContent.site.title;
-    const description = document.querySelector('meta[name="description"]') || document.head.appendChild(Object.assign(document.createElement('meta'), { name: 'description' }));
-    description.content = caseProject?.description || page?.seoDescription || page?.intro || content.site?.description || '';
+    const title = caseProject ? `${caseProject.title} — Holosoft Case Study` : page?.seoTitle || page?.title || content.site?.title || fallbackContent.site.title;
+    const description = caseProject?.description || page?.seoDescription || page?.intro || content.site?.description || '';
+    const canonical = currentPath === '/' ? `${SITE_URL}/` : `${SITE_URL}${currentPath}`;
+    const image = absoluteUrl(caseProject?.media?.src || page?.media?.src || 'assets/holosoft-mark.svg');
+    const setMeta = (selector, attribute, value) => {
+      let node = document.head.querySelector(selector);
+      if (!node) {
+        node = document.createElement('meta');
+        const [key, keyValue] = attribute;
+        node.setAttribute(key, keyValue);
+        document.head.appendChild(node);
+      }
+      node.setAttribute('content', value || '');
+    };
+    document.title = title;
+    setMeta('meta[name="description"]', ['name','description'], description);
+    setMeta('meta[property="og:title"]', ['property','og:title'], title);
+    setMeta('meta[property="og:description"]', ['property','og:description'], description);
+    setMeta('meta[property="og:type"]', ['property','og:type'], caseProject ? 'article' : 'website');
+    setMeta('meta[property="og:url"]', ['property','og:url'], canonical);
+    setMeta('meta[property="og:image"]', ['property','og:image'], image);
+    setMeta('meta[name="twitter:card"]', ['name','twitter:card'], caseProject?.media?.src || page?.media?.src ? 'summary_large_image' : 'summary');
+    setMeta('meta[name="twitter:title"]', ['name','twitter:title'], title);
+    setMeta('meta[name="twitter:description"]', ['name','twitter:description'], description);
+    setMeta('meta[name="twitter:image"]', ['name','twitter:image'], image);
+    let canonicalLink = document.head.querySelector('link[rel="canonical"]');
+    if (!canonicalLink) {
+      canonicalLink = document.createElement('link');
+      canonicalLink.rel = 'canonical';
+      document.head.appendChild(canonicalLink);
+    }
+    canonicalLink.href = canonical;
+
+    let schema = document.getElementById('holosoft-jsonld');
+    if (!schema) {
+      schema = document.createElement('script');
+      schema.type = 'application/ld+json';
+      schema.id = 'holosoft-jsonld';
+      document.head.appendChild(schema);
+    }
+    schema.textContent = JSON.stringify({
+      '@context':'https://schema.org',
+      '@graph':[
+        { '@type':'Organization', '@id':`${SITE_URL}/#organization`, name:content.site?.name || 'Holosoft', url:`${SITE_URL}/`, logo:`${SITE_URL}/assets/holosoft-mark.svg`, email:content.site?.contactEmail || undefined },
+        { '@type':'WebSite', '@id':`${SITE_URL}/#website`, url:`${SITE_URL}/`, name:content.site?.name || 'Holosoft', description:content.site?.description || undefined, publisher:{ '@id':`${SITE_URL}/#organization` } },
+        caseProject ? { '@type':'CreativeWork', name:caseProject.title, description:caseProject.description, url:canonical, image:caseProject.media?.src ? image : undefined, creator:{ '@id':`${SITE_URL}/#organization` } } : { '@type':'WebPage', name:title, description, url:canonical, isPartOf:{ '@id':`${SITE_URL}/#website` } }
+      ]
+    });
   }, [content, currentPath]);
 
-  useReveal(`${currentPath}-${content.meta?.version ?? 0}`);
+  useEffect(() => {
+    if (!('serviceWorker' in navigator) || !import.meta.env.PROD) return undefined;
+    let registration;
+    navigator.serviceWorker.register(`${APP_BASE}sw.js`, { scope:APP_BASE }).then((result) => {
+      registration = result;
+      registration.update().catch(() => {});
+    }).catch(() => {});
+    return () => { void registration; };
+  }, []);
+
+    useReveal(`${currentPath}-${content.meta?.version ?? 0}`);
 
   return <>
     {booting && <BootLoader onComplete={endBoot} />}
