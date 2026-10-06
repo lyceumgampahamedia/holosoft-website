@@ -113,6 +113,11 @@ function normalizeProject(project, index) {
 function normalizeContent(content) {
   return {
     ...content,
+    services: Array.isArray(content.services) ? content.services.map((service) => ({
+      ...service,
+      href: service?.href || '',
+      linkNewTab: Boolean(service?.linkNewTab)
+    })) : [],
     projects: Array.isArray(content.projects) ? content.projects.map(normalizeProject) : [],
     pages: Array.isArray(content.pages) ? content.pages : [],
     partners: Array.isArray(content.partners) ? content.partners : [],
