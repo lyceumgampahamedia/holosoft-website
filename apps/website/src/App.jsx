@@ -241,10 +241,14 @@ export default function App() {
     let trailX = targetX;
     let trailY = targetY;
     let raf;
+    let lastFrame = performance.now();
+    const damp = (speed, delta) => 1 - Math.exp(-speed * delta);
 
-    const animate = () => {
-      const coreEase = reduced ? 1 : 0.34;
-      const trailEase = reduced ? 1 : 0.105;
+    const animate = (time) => {
+      const delta = Math.min(Math.max((time - lastFrame) / 1000, 0), 0.05);
+      lastFrame = time;
+      const coreEase = reduced ? 1 : damp(28, delta);
+      const trailEase = reduced ? 1 : damp(9.5, delta);
       coreX += (targetX - coreX) * coreEase;
       coreY += (targetY - coreY) * coreEase;
       trailX += (targetX - trailX) * trailEase;
