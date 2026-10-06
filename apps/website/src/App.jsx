@@ -342,7 +342,7 @@ function ProjectCaseStudy({ project, content }) {
       <div className="section-index reveal">[ SYSTEM / OVERVIEW ]</div>
       <div className="case-overview-copy reveal"><p className="micro-label">THE BRIEF</p><h2>{project.caseHeading || 'A system designed around the work, not around the software.'}</h2><p>{project.caseIntro || project.description}</p></div>
     </section>
-    <CaseGallery items={project.gallery || []} />
+    {(project.gallery || []).some((item) => item?.media?.src) ? <CaseGallery items={project.gallery || []} /> : <section className="case-signature-frame section-shell reveal"><div className="case-signature-meta"><span>[ VISUAL / SYSTEM ]</span><strong>{project.code}</strong><i>{project.visual?.toUpperCase() || 'SYSTEM'}</i></div><div className={`case-signature-visual visual-${project.visual}`}><ProjectVisual type={project.visual} /></div></section>}
     {story.length > 0 && <section className="case-story section-shell">{story.map(([no, label, body]) => <article className="case-story-row reveal" key={label}><span className="case-story-no">{no}</span><p className="micro-label">{label}</p><div>{String(body).split('\n').map((line,index) => line ? <p key={index}>{line}</p> : <br key={index} />)}</div></article>)}</section>}
     <CaseChapterExperience chapters={project.chapters || []} />
     <CaseArchitecture project={project} />
