@@ -4196,3 +4196,224 @@ section[id] { scroll-margin-top:calc(var(--header-h) + 18px); }
     border:1px solid CanvasText;
   }
 }
+/* =========================================================
+   HOLOSOFT V2.1 — PRODUCTION SYSTEM POLISH
+   ========================================================= */
+
+/* Keyboard access */
+.skip-link {
+  position:fixed;
+  left:max(14px,env(safe-area-inset-left));
+  top:max(12px,env(safe-area-inset-top));
+  z-index:20000;
+  padding:12px 14px;
+  background:#fff;
+  color:#000;
+  font:9px/1 var(--mono);
+  letter-spacing:.1em;
+  transform:translateY(-180%);
+  transition:transform .3s var(--ease-butter);
+}
+.skip-link:focus { transform:translateY(0); }
+a:focus-visible,
+button:focus-visible {
+  outline:1px solid #8f58a3;
+  outline-offset:4px;
+}
+
+/* Global scroll state */
+.scroll-system {
+  position:fixed;
+  right:max(18px,env(safe-area-inset-right));
+  bottom:max(18px,env(safe-area-inset-bottom));
+  z-index:47;
+  width:min(280px,calc(100vw - 36px));
+  display:grid;
+  grid-template-columns:auto minmax(70px,1fr) auto;
+  align-items:center;
+  gap:10px;
+  padding:9px 11px;
+  border:1px solid rgba(66,76,108,.54);
+  background:rgba(0,0,0,.78);
+  backdrop-filter:blur(12px);
+  pointer-events:none;
+  font:7px/1 var(--mono);
+  letter-spacing:.11em;
+  color:#7089b7;
+}
+.scroll-system-track {
+  height:1px;
+  background:rgba(255,255,255,.13);
+  overflow:hidden;
+}
+.scroll-system-track i {
+  display:block;
+  width:100%;
+  height:100%;
+  transform-origin:left;
+  background:var(--brand-line);
+  box-shadow:0 0 10px rgba(33,83,161,.35),0 0 14px rgba(111,32,129,.28);
+  will-change:transform;
+}
+.scroll-system-percent { color:#a37bb1; }
+
+/* Contact becomes a real system endpoint */
+.contact-system-meta {
+  width:min(100%,980px);
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  margin-bottom:28px;
+  font:8px/1.3 var(--mono);
+  letter-spacing:.11em;
+  color:#6f88b7;
+}
+.contact-system-meta i {
+  font-style:normal;
+  color:#a673b5;
+}
+.contact-action-grid {
+  width:min(100%,980px);
+  display:grid;
+  grid-template-columns:minmax(0,1.2fr) minmax(240px,.7fr);
+  gap:12px;
+  margin-top:50px;
+}
+.contact-action-grid .cta-link {
+  margin-top:0;
+  width:100%;
+}
+.contact-copy {
+  min-height:70px;
+  border:1px solid rgba(76,70,92,.72);
+  background:#000;
+  color:#aaa8b0;
+  padding:14px 18px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  gap:9px;
+  cursor:pointer;
+  text-align:left;
+  transition:border-color .55s var(--ease-butter),background .7s var(--ease-butter),box-shadow .7s var(--ease-butter),transform .55s var(--ease-butter);
+}
+.contact-copy span {
+  font:10px/1.3 var(--mono);
+  overflow-wrap:anywhere;
+}
+.contact-copy b {
+  font:7px/1 var(--mono);
+  letter-spacing:.12em;
+  font-weight:400;
+  color:#7896ce;
+}
+.contact-copy:hover {
+  transform:translate3d(0,-2px,0);
+  border-color:#754589;
+  background:linear-gradient(105deg,rgba(33,83,161,.13),#000 56%,rgba(111,32,129,.1));
+  box-shadow:0 18px 52px rgba(33,83,161,.07);
+}
+
+/* Case-study continuity */
+.case-project-nav {
+  display:grid;
+  grid-template-columns:minmax(180px,.62fr) minmax(0,1fr) minmax(0,1fr);
+  gap:1px;
+  padding-top:1px;
+  padding-bottom:1px;
+  background:rgba(71,65,83,.72);
+  border-bottom:1px solid var(--line);
+}
+.case-project-nav>a,
+.case-project-nav>.case-project-direction {
+  min-height:150px;
+  background:#000;
+  padding:24px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:24px;
+  transition:background .72s var(--ease-butter),box-shadow .72s var(--ease-butter);
+}
+.case-project-nav a>span {
+  font:8px/1 var(--mono);
+  letter-spacing:.12em;
+  color:#728bc0;
+}
+.case-project-nav a>strong {
+  max-width:430px;
+  font-size:clamp(20px,2vw,31px);
+  line-height:1.02;
+  letter-spacing:-.04em;
+  font-weight:520;
+}
+.case-project-direction.next { text-align:right;align-items:flex-end; }
+.case-project-nav a:hover {
+  background:linear-gradient(130deg,rgba(33,83,161,.16),#000 50%,rgba(111,32,129,.12));
+  box-shadow:inset 0 0 0 1px rgba(111,32,129,.25);
+}
+.case-project-direction.is-empty { opacity:.22; }
+
+/* Three-column footer with useful live endpoint */
+.site-footer {
+  grid-template-columns:minmax(170px,.65fr) minmax(220px,1fr) minmax(0,1fr);
+}
+.footer-system {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  font:8px/1.35 var(--mono);
+  letter-spacing:.09em;
+  color:#696a72;
+}
+.footer-system a {
+  color:#879cc5;
+  overflow-wrap:anywhere;
+  transition:color .45s var(--ease-butter);
+}
+.footer-system a:hover { color:#c18bd0; }
+
+/* Images: don't animate before decoding and protect layout. */
+.section-media img {
+  content-visibility:auto;
+}
+
+/* Responsive system polish */
+@media(max-width:980px) {
+  .scroll-system { width:220px; }
+  .contact-action-grid { grid-template-columns:1fr; }
+  .case-project-nav { grid-template-columns:1fr 1fr; }
+  .case-project-all { grid-column:1/-1; }
+  .site-footer { grid-template-columns:1fr 1fr; }
+  .footer-meta { grid-column:1/-1;justify-content:flex-start; }
+}
+@media(max-width:760px) {
+  .scroll-system {
+    right:max(10px,env(safe-area-inset-right));
+    bottom:max(10px,env(safe-area-inset-bottom));
+    width:min(210px,calc(100vw - 20px));
+    grid-template-columns:minmax(0,1fr) auto;
+    padding:8px 9px;
+  }
+  .scroll-system-label { display:none; }
+  .contact-system-meta { flex-direction:column;gap:8px; }
+  .contact-action-grid { margin-top:36px; }
+  .contact-copy { min-height:62px; }
+  .case-project-nav { grid-template-columns:1fr; }
+  .case-project-all { grid-column:auto; }
+  .case-project-nav>a,
+  .case-project-nav>.case-project-direction { min-height:112px;padding:18px; }
+  .case-project-direction.next { text-align:left;align-items:flex-start; }
+  .case-project-direction.is-empty { display:none; }
+  .site-footer { grid-template-columns:1fr; }
+  .footer-meta { grid-column:auto; }
+}
+@media(hover:none),(pointer:coarse) {
+  .contact-copy:hover { transform:none; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .scroll-system-track i,
+  .contact-copy,
+  .case-project-nav a { transition:none!important; }
+}
