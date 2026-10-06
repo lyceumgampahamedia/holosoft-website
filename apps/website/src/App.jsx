@@ -80,6 +80,7 @@ function Media({ media, className = '', decorative = false }) {
 }
 
 function SiteChrome({ content, currentPath, children }) {
+  const [menuOpen, setMenuOpen] = useState(false);
   const onHome = currentPath === '/';
   const pageLinks = (content.pages || []).filter((page) => page.published !== false && page.showInNav !== false).map((page) => ({ label: page.navLabel || page.title, href: `/${page.slug}` }));
   const baseNav = [...(content.site.navigation || [])];
@@ -89,13 +90,38 @@ function SiteChrome({ content, currentPath, children }) {
     baseNav.splice(aboutIndex >= 0 ? aboutIndex : baseNav.length, 0, { label: 'Team', href: '#team' });
   }
   const navItems = [...baseNav, ...pageLinks];
+
+  useEffect(() => {
+    document.body.classList.toggle('nav-open', menuOpen);
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setMenuOpen(false);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.classList.remove('nav-open');
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [menuOpen]);
+
   return <>
     <div className="noise" aria-hidden="true" /><div className="scanline" aria-hidden="true" />
     <header className="site-header" id="top">
-      <a className="brand" href={APP_BASE} aria-label="Holosoft home"><BrandWordmark /></a>
+      <a className="brand" href={APP_BASE} aria-label="Holosoft home" onClick={() => setMenuOpen(false)}><BrandWordmark /></a>
       <nav className="desktop-nav">{navItems.map((item) => <a key={`${item.label}-${item.href}`} className={currentPath === item.href ? 'is-current' : ''} href={normalizeHref(item.href, onHome)}>{item.label}</a>)}</nav>
       <a className="header-cta" href={normalizeHref(content.site.headerCta?.href || '#contact', onHome)}><span>{content.site.headerCta?.label || 'Start a project'}</span><span>↗</span></a>
+      <button className={`mobile-menu-button ${menuOpen ? 'is-open' : ''}`} type="button" aria-expanded={menuOpen} aria-controls="mobile-command-menu" aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} onClick={() => setMenuOpen((value) => !value)}>
+        <span /><span /><b>{menuOpen ? 'CLOSE' : 'MENU'}</b>
+      </button>
     </header>
+    <aside className={`mobile-command-menu ${menuOpen ? 'is-open' : ''}`} id="mobile-command-menu" aria-hidden={!menuOpen}>
+      <div className="mobile-command-grid" aria-hidden="true" />
+      <div className="mobile-command-core" aria-hidden="true"><img src={appAsset('holosoft-mark.svg')} alt="" /><i /><i /></div>
+      <div className="mobile-command-meta"><span>HOLOSOFT / COMMAND</span><span>{content.site.statusLabel || 'SYSTEMS ONLINE'}</span></div>
+      <nav className="mobile-command-links" aria-label="Mobile navigation">
+        {navItems.map((item, index) => <a key={`mobile-${item.label}-${item.href}`} href={normalizeHref(item.href, onHome)} onClick={() => setMenuOpen(false)}><span>{String(index + 1).padStart(2,'0')}</span><strong>{item.label}</strong><i>↗</i></a>)}
+      </nav>
+      <a className="mobile-command-cta" href={normalizeHref(content.site.headerCta?.href || '#contact', onHome)} onClick={() => setMenuOpen(false)}><span>{content.site.headerCta?.label || 'Start a project'}</span><b>INITIATE ↗</b></a>
+    </aside>
     {children}
     <footer className="site-footer section-shell"><div className="footer-brand"><BrandWordmark /><p>© {new Date().getFullYear()} // ALL SYSTEMS RESERVED</p></div><div className="footer-meta"><span>CONTENT V{content.meta?.version ?? 0}</span><span>{content.site.statusLabel}</span><a href="#top">RETURN / TOP ↑</a></div></footer>
   </>;
@@ -152,7 +178,7 @@ function HomePage({ content, apiState }) {
           <div className="hero-actions reveal"><a className="button button-solid" href={content.hero.primaryCta.href}>{content.hero.primaryCta.label}<span>↓</span></a><a className="button button-ghost" href={content.hero.secondaryCta.href}>{content.hero.secondaryCta.label}<span>↗</span></a></div>
           {heroMedia?.src && heroMedia.position === 'left' && <Media media={heroMedia} className="hero-inline-media reveal" />}
         </div>
-        <div className="hero-core reveal">{heroMedia?.src && heroMedia.position === 'right' && <Media media={heroMedia} className="hero-core-media" />}<CoreGraphic /></div>
+        <div className="hero-core reveal">{heroMedia?.src && heroMedia.position === 'right' && <Media media={heroMedia} className="hero-core-media" />}<CoreGraphic services={content.services} /></div>
       </div>
       <div className="hero-ticker reveal"><div className="ticker-track">{[...tickerItems, ...tickerItems].map((item, i) => <span key={`${item}-${i}`}>{item}<i>◇</i></span>)}</div></div>
     </section>
@@ -172,7 +198,7 @@ function HomePage({ content, apiState }) {
 
     <section className="work section-shell" id="work">
       <SectionHead index="03 / SYSTEMS" label={content.sections?.work?.label} heading={content.sections?.work?.heading} media={content.sections?.work?.media} />
-      <div className="work-grid">{content.projects.map((project) => <article className={`work-card reveal ${project.featured ? 'featured' : ''}`} key={project.id}><div className="card-top"><span>{project.code}</span><span>{project.type}</span></div><div className={`card-visual visual-${project.visual}`}>{project.media?.src ? <Media media={project.media} className="project-card-media" /> : <ProjectVisual type={project.visual} />}</div><div className="card-copy"><h3>{project.title}</h3><p>{project.description}</p></div></article>)}</div>
+      <div className="work-grid">{content.projects.map((project) => <a className={`work-card reveal ${project.featured ? 'featured' : ''}`} href={appHref(`/work/${project.slug || project.id}`)} aria-label={`Open case study: ${project.title}`} key={project.id}><div className="card-top"><span>{project.code}</span><span>{project.type}</span></div><div className={`card-visual visual-${project.visual}`}>{project.media?.src ? <Media media={project.media} className="project-card-media" /> : <ProjectVisual type={project.visual} />}</div><div className="card-copy"><div><h3>{project.title}</h3><p>{project.description}</p></div><span className="case-card-link">VIEW CASE / ↗</span></div></a>)}</div>
     </section>
 
     <section className="process section-shell" id="process">
@@ -191,6 +217,43 @@ function ContactSection({ content }) {
     {media?.src && <Media media={media} className="contact-section-media reveal" decorative={media.position === 'background'} />}
     <span className="cta-core-stack" aria-hidden="true"><img className="cta-core cta-core-mono" src={appAsset('holosoft-mark-mono.svg')} alt="" /><img className="cta-core cta-core-color" src={appAsset('holosoft-mark.svg')} alt="" /></span><p className="micro-label reveal">{content.contact.label}</p><h2 className="reveal">{content.contact.heading}</h2><p className="cta-sub reveal">{content.contact.subheading}</p><a className="cta-link reveal" href={`mailto:${content.site.contactEmail}`}><span>{content.contact.ctaLabel || content.site.contactEmail}</span><span>↗</span></a>
   </section>;
+}
+
+function ProjectCaseStudy({ project, content }) {
+  const metrics = (project.metrics || []).filter((metric) => metric?.value || metric?.label);
+  const story = [
+    ['01', 'CHALLENGE', project.challenge],
+    ['02', 'APPROACH', project.approach],
+    ['03', 'OUTCOME', project.outcome]
+  ].filter(([, , body]) => body);
+  return <main className="case-study">
+    <section className="case-hero section-shell">
+      <div className="case-hero-meta reveal"><a href={`${APP_BASE}#work`}>← SELECTED WORK</a><span>{project.code} / {project.type}</span></div>
+      <div className="case-hero-grid">
+        <div className="case-hero-copy">
+          <p className="eyebrow reveal">HOLOSOFT / CASE STUDY</p>
+          <h1 className="reveal">{project.title}</h1>
+          <p className="case-hero-intro reveal">{project.description}</p>
+        </div>
+        <div className="case-orbit-card reveal">
+          <span>PROJECT NODE</span><strong>{project.code}</strong><i>{project.year || 'ACTIVE SYSTEM'}</i>
+          <div className="case-orbit-visual">{project.media?.src ? <Media media={project.media} className="case-hero-media" /> : <ProjectVisual type={project.visual} />}</div>
+        </div>
+      </div>
+      <div className="case-facts reveal">
+        <div><span>CLIENT</span><strong>{project.client || 'CONFIDENTIAL / INTERNAL'}</strong></div>
+        <div><span>YEAR</span><strong>{project.year || '—'}</strong></div>
+        <div><span>DISCIPLINES</span><strong>{project.disciplines || project.type}</strong></div>
+      </div>
+    </section>
+    <section className="case-overview section-shell">
+      <div className="section-index reveal">[ SYSTEM / OVERVIEW ]</div>
+      <div className="case-overview-copy reveal"><p className="micro-label">THE BRIEF</p><h2>{project.caseHeading || 'A system designed around the work, not around the software.'}</h2><p>{project.caseIntro || project.description}</p></div>
+    </section>
+    {story.length > 0 && <section className="case-story section-shell">{story.map(([no, label, body]) => <article className="case-story-row reveal" key={label}><span className="case-story-no">{no}</span><p className="micro-label">{label}</p><div>{String(body).split('\n').map((line,index) => line ? <p key={index}>{line}</p> : <br key={index} />)}</div></article>)}</section>}
+    {metrics.length > 0 && <section className="case-metrics section-shell"><div className="case-metrics-head reveal"><span className="section-index">[ VERIFIED / RESULTS ]</span><p>Only published project metrics appear here.</p></div><div className="case-metrics-grid">{metrics.map((metric,index) => <div className="case-metric reveal" key={`${metric.label}-${index}`}><strong>{metric.value}</strong><span>{metric.label}</span></div>)}</div></section>}
+    <section className="case-next section-shell reveal"><p className="micro-label">NEXT CONNECTION</p><h2>Have a system that needs this level of thinking?</h2><a className="cta-link" href={`mailto:${content.site.contactEmail}`}><span>{content.contact?.ctaLabel || content.site.contactEmail}</span><span>↗</span></a></section>
+  </main>;
 }
 
 function DynamicPage({ page, content }) {
@@ -219,13 +282,22 @@ function NotFound({ content }) {
 
 export default function App() {
   const [content, setContent] = useState(fallbackContent);
-  const [booting, setBooting] = useState(true);
+  const [booting, setBooting] = useState(() => {
+    try { return sessionStorage.getItem('holosoft-booted') !== '1'; }
+    catch { return true; }
+  });
   const [apiState, setApiState] = useState('SYNCING');
+  const [routeLeaving, setRouteLeaving] = useState(false);
   const cursorRef = useRef(null);
   const cursorCoreRef = useRef(null);
-  const endBoot = useCallback(() => setBooting(false), []);
+  const endBoot = useCallback(() => {
+    try { sessionStorage.setItem('holosoft-booted', '1'); } catch {}
+    setBooting(false);
+  }, []);
   const currentPath = routePathFromLocation();
-  const activePage = currentPath === '/' ? null : (content.pages || []).find((page) => page.published !== false && `/${page.slug}` === currentPath);
+  const projectMatch = currentPath.match(/^\/work\/([^/]+)$/);
+  const activeProject = projectMatch ? (content.projects || []).find((project) => project.published !== false && project.caseStudyEnabled !== false && (project.slug || project.id) === decodeURIComponent(projectMatch[1])) : null;
+  const activePage = currentPath === '/' || projectMatch ? null : (content.pages || []).find((page) => page.published !== false && `/${page.slug}` === currentPath);
 
   useEffect(() => {
     const orb = cursorRef.current;
@@ -292,6 +364,28 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    const handleInternalNavigation = (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const anchor = event.target.closest?.('a[href]');
+      if (!anchor || anchor.target === '_blank' || anchor.hasAttribute('download')) return;
+      let url;
+      try { url = new URL(anchor.href, window.location.href); } catch { return; }
+      if (url.origin !== window.location.origin) return;
+      const sameDocumentHash = url.pathname === window.location.pathname && url.search === window.location.search && url.hash;
+      if (sameDocumentHash) return;
+      event.preventDefault();
+      setRouteLeaving(true);
+      try {
+        sessionStorage.setItem('holosoft-booted', '1');
+        sessionStorage.setItem('holosoft-route-navigation', '1');
+      } catch {}
+      window.setTimeout(() => window.location.assign(url.href), 560);
+    };
+    document.addEventListener('click', handleInternalNavigation);
+    return () => document.removeEventListener('click', handleInternalNavigation);
+  }, []);
+
+  useEffect(() => {
     getPublishedContent().then((data) => {
       setContent(data);
       setApiState('LIVE CONTENT');
@@ -300,19 +394,21 @@ export default function App() {
 
   useEffect(() => {
     const page = currentPath === '/' ? null : (content.pages || []).find((item) => item.published !== false && `/${item.slug}` === currentPath);
-    document.title = page?.seoTitle || page?.title || content.site?.title || fallbackContent.site.title;
+    const caseProject = currentPath.startsWith('/work/') ? (content.projects || []).find((item) => `/work/${item.slug || item.id}` === currentPath) : null;
+    document.title = caseProject ? `${caseProject.title} — Holosoft Case Study` : page?.seoTitle || page?.title || content.site?.title || fallbackContent.site.title;
     const description = document.querySelector('meta[name="description"]') || document.head.appendChild(Object.assign(document.createElement('meta'), { name: 'description' }));
-    description.content = page?.seoDescription || page?.intro || content.site?.description || '';
+    description.content = caseProject?.description || page?.seoDescription || page?.intro || content.site?.description || '';
   }, [content, currentPath]);
 
   useReveal(`${currentPath}-${content.meta?.version ?? 0}`);
 
   return <>
     {booting && <BootLoader onComplete={endBoot} />}
+    <div className={`route-transition ${routeLeaving ? 'is-leaving' : ''}`} aria-hidden="true"><span className="route-panel route-panel-top" /><span className="route-panel route-panel-bottom" /><div className="route-transition-mark"><img src={appAsset('holosoft-mark.svg')} alt="" /><span>SHIFTING NODE</span></div></div>
     <div ref={cursorRef} className="cursor-orb" aria-hidden="true" />
     <div ref={cursorCoreRef} className="site-cursor" aria-hidden="true"><span className="cursor-ring" /><span className="cursor-ring cursor-ring-secondary" /><span className="cursor-dot" /><span className="cursor-tick cursor-tick-x" /><span className="cursor-tick cursor-tick-y" /><span className="cursor-label">ACT</span></div>
     <SiteChrome content={content} currentPath={currentPath}>
-      {currentPath === '/' ? <HomePage content={content} apiState={apiState} /> : activePage ? <DynamicPage page={activePage} content={content} /> : <NotFound content={content} />}
+      {currentPath === '/' ? <HomePage content={content} apiState={apiState} /> : activeProject ? <ProjectCaseStudy project={activeProject} content={content} /> : activePage ? <DynamicPage page={activePage} content={content} /> : <NotFound content={content} />}
     </SiteChrome>
   </>;
 }
