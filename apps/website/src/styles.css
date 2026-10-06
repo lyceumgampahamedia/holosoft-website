@@ -1911,3 +1911,465 @@ body {
   .cta-link::before,
   .page-block-link::before { transition:none; }
 }
+/* =========================================================
+   HOLOSOFT V1.6 — BUTTER MOTION + ALIGNMENT QA
+   Framerate-safe JS pairs with slow-in/fast-out CSS motion.
+   Layout-changing hover shifts are removed to keep text locked.
+   ========================================================= */
+
+:root {
+  --ease-butter:cubic-bezier(.16,1,.3,1);
+  --ease-butter-soft:cubic-bezier(.22,1,.36,1);
+  --ease-linear-soft:cubic-bezier(.4,0,.2,1);
+  --motion-tap:.34s;
+  --motion-ui:.58s;
+  --motion-card:.82s;
+  --motion-reveal:1s;
+}
+
+html {
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-kerning:normal;
+}
+
+h1,h2,h3,
+.hero-intro,
+.page-intro,
+.section-description,
+.card-copy p,
+.team-card p,
+.page-body {
+  text-wrap:pretty;
+}
+
+h1,h2,h3 {
+  text-wrap:balance;
+  overflow-wrap:normal;
+  word-break:normal;
+}
+
+a,button {
+  touch-action:manipulation;
+}
+
+/* Reveal motion: slightly longer travel, zero snap, stagger honored. */
+.reveal {
+  opacity:0;
+  transform:translate3d(0,20px,0);
+  filter:blur(4px);
+  transition:
+    opacity var(--motion-reveal) var(--ease-butter),
+    transform var(--motion-reveal) var(--ease-butter),
+    filter .86s var(--ease-butter);
+  transition-delay:var(--reveal-delay,0ms);
+  will-change:opacity,transform,filter;
+}
+.reveal.is-visible {
+  opacity:1;
+  transform:translate3d(0,0,0);
+  filter:blur(0);
+}
+
+/* Header baseline + overflow safety. */
+.site-header {
+  grid-template-columns:minmax(150px,1fr) auto minmax(150px,1fr);
+  column-gap:clamp(18px,2.5vw,42px);
+}
+.brand,.header-cta,.desktop-nav { min-width:0; }
+.desktop-nav {
+  align-items:center;
+  justify-content:center;
+  gap:clamp(16px,2.1vw,34px);
+  white-space:nowrap;
+}
+.desktop-nav a,
+.header-cta {
+  line-height:1.2;
+}
+.header-cta {
+  min-height:44px;
+  white-space:nowrap;
+}
+.hero-meta {
+  min-width:0;
+  flex-wrap:wrap;
+  row-gap:8px;
+}
+.hero-meta > span { min-width:0; }
+.content-state { margin-left:auto;white-space:nowrap; }
+
+/* Lock text to its grid instead of moving the grid on hover. */
+.service-row {
+  transition:
+    color var(--motion-ui) var(--ease-butter),
+    box-shadow var(--motion-card) var(--ease-butter),
+    border-color var(--motion-ui) var(--ease-butter);
+}
+.service-row::before {
+  transition:transform .72s var(--ease-butter) !important;
+}
+.service-row::after {
+  transition:transform .72s var(--ease-butter),opacity .58s var(--ease-butter) !important;
+}
+.service-row:hover {
+  padding-left:0 !important;
+  padding-right:0 !important;
+}
+.service-row > * {
+  min-width:0;
+}
+.service-row h3,
+.service-row p,
+.service-tag,
+.service-no,
+.row-arrow {
+  transition:
+    color .48s var(--ease-butter),
+    transform .68s var(--ease-butter);
+}
+.service-row:hover h3,
+.service-row:hover p,
+.service-row:hover .service-tag {
+  transform:translate3d(6px,0,0);
+}
+.service-row h3 {
+  line-height:1.08;
+}
+.service-tag {
+  line-height:1.35;
+  overflow-wrap:anywhere;
+}
+.row-arrow {
+  justify-self:end;
+  line-height:1;
+}
+
+/* Cards: slower settle, GPU-only movement. */
+.work-card,
+.team-card,
+.partner-node,
+.process-step,
+.page-system-card {
+  backface-visibility:hidden;
+  transform:translateZ(0);
+}
+.work-card {
+  transition:
+    transform var(--motion-card) var(--ease-butter),
+    border-color .68s var(--ease-butter),
+    box-shadow var(--motion-card) var(--ease-butter),
+    background var(--motion-card) var(--ease-butter) !important;
+}
+.work-card:hover { transform:translate3d(0,-5px,0); }
+.work-card::after { transition:transform .82s var(--ease-butter) !important; }
+
+.team-card {
+  transition:
+    transform .9s var(--ease-butter),
+    border-color .7s var(--ease-butter),
+    box-shadow .9s var(--ease-butter),
+    background .9s var(--ease-butter) !important;
+}
+.team-card:hover { transform:translate3d(0,-6px,0); }
+.team-card::before { transition:transform .88s var(--ease-butter),opacity .7s var(--ease-butter) !important; }
+
+.partner-node {
+  transition:
+    background .72s var(--ease-butter),
+    border-color .64s var(--ease-butter),
+    box-shadow .8s var(--ease-butter),
+    transform .72s var(--ease-butter);
+}
+.partner-node:hover { transform:translate3d(0,-2px,0); }
+.partner-node::before { transition:transform .82s var(--ease-butter),opacity .72s var(--ease-butter) !important; }
+
+.process-step {
+  transition:
+    background .78s var(--ease-butter),
+    box-shadow .78s var(--ease-butter),
+    border-color .62s var(--ease-butter);
+}
+.process-step::after { transition:transform .8s var(--ease-butter),height .5s var(--ease-butter) !important; }
+
+.card-top,
+.card-copy,
+.team-card-meta,
+.partner-meta,
+.page-system-card {
+  min-width:0;
+}
+.card-top {
+  align-items:center;
+  gap:16px;
+  line-height:1.35;
+}
+.card-top span {
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+.card-copy h3,
+.team-card h3,
+.process-step h3,
+.partner-meta strong {
+  line-height:1.08;
+}
+.card-copy p,
+.team-card p,
+.process-step p {
+  overflow-wrap:anywhere;
+}
+
+/* Buttons/links transition with the fill, not ahead of it. */
+.button,
+.header-cta,
+.cta-link,
+.page-block-link {
+  min-width:0;
+  align-items:center;
+  line-height:1.2;
+  transition:
+    color .5s var(--ease-butter),
+    border-color .52s var(--ease-butter),
+    box-shadow .72s var(--ease-butter),
+    transform .58s var(--ease-butter) !important;
+}
+.button::before,
+.header-cta::before,
+.cta-link::before,
+.page-block-link::before {
+  transition:transform .7s var(--ease-butter) !important;
+}
+.button:hover {
+  transform:translate3d(0,-2px,0);
+}
+.button > span,
+.header-cta > span,
+.cta-link > span,
+.page-block-link > span {
+  position:relative;
+  z-index:1;
+}
+.cta-link,
+.page-block-link {
+  gap:24px;
+}
+.cta-link > span:first-child,
+.page-block-link > span:first-child {
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+
+/* Continuous pieces stay linear but render on their own compositor layer. */
+.ticker-track,
+.partner-track,
+.boot-orbit,
+.cursor-ring,
+.media-scan {
+  will-change:transform;
+  backface-visibility:hidden;
+}
+.ticker-track,
+.partner-track {
+  transform:translate3d(0,0,0);
+}
+
+/* JS drives core transform every frame; CSS transition here caused drag/jitter. */
+.core-stage {
+  transition:none !important;
+  will-change:transform;
+  transform-style:preserve-3d;
+  backface-visibility:hidden;
+}
+.core-energy,
+.core-logo-stack .core-logo,
+.core-ring,
+.axis,
+.core-label {
+  transition-duration:.7s !important;
+  transition-timing-function:var(--ease-butter) !important;
+}
+
+/* Cursor internals settle smoothly while outer position stays realtime. */
+.site-cursor {
+  transition:opacity .28s var(--ease-butter) !important;
+}
+.cursor-ring {
+  transition:
+    inset .34s var(--ease-butter),
+    opacity .34s var(--ease-butter),
+    filter .45s var(--ease-butter) !important;
+}
+.cursor-dot {
+  transition:
+    width .28s var(--ease-butter),
+    height .28s var(--ease-butter),
+    background .28s var(--ease-butter),
+    box-shadow .4s var(--ease-butter) !important;
+}
+.cursor-tick {
+  transition:
+    width .34s var(--ease-butter),
+    height .34s var(--ease-butter),
+    opacity .3s var(--ease-butter) !important;
+}
+.cursor-label {
+  transition:opacity .28s var(--ease-butter),transform .36s var(--ease-butter) !important;
+}
+.cursor-orb {
+  transition:
+    opacity .48s var(--ease-butter),
+    width .72s var(--ease-butter),
+    height .72s var(--ease-butter) !important;
+}
+
+/* Media feels fluid without text/layout reflow. */
+.section-media,
+.section-media img,
+.partner-logo-wrap,
+.partner-logo-wrap img,
+.network-logo-stack img {
+  transition-timing-function:var(--ease-butter) !important;
+}
+.section-media {
+  transition:border-color .68s var(--ease-butter),box-shadow .82s var(--ease-butter);
+}
+.section-media img {
+  transition:filter .92s var(--ease-butter),transform 1.15s var(--ease-butter) !important;
+}
+
+/* Typography/grid alignment QA. */
+.section-head {
+  align-items:start;
+}
+.section-head > *,
+.section-heading-copy,
+.manifesto-copy,
+.hero-copy,
+.page-block-content,
+.page-block-copy {
+  min-width:0;
+}
+.section-index,
+.micro-label,
+.eyebrow {
+  line-height:1.35;
+}
+.manifesto h2,
+.section-head h2,
+.cta h2,
+.page-block h2 {
+  line-height:.98;
+}
+.manifesto-bottom {
+  align-items:start;
+}
+.terminal-top {
+  align-items:center;
+  gap:16px;
+}
+.terminal-top span {
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+.process-step {
+  min-width:0;
+}
+.team-grid {
+  align-items:stretch;
+}
+.team-card-meta {
+  height:100%;
+}
+.team-links {
+  align-items:center;
+  flex-wrap:wrap;
+}
+.partner-node {
+  align-items:center;
+}
+.partner-meta {
+  justify-content:center;
+}
+.partner-meta strong,
+.partner-meta small {
+  overflow-wrap:anywhere;
+}
+.page-block-content {
+  align-items:center;
+}
+.footer-meta {
+  align-items:center;
+  row-gap:10px;
+}
+.site-footer > * {
+  min-width:0;
+}
+
+/* Avoid media colliding with service copy on narrower desktops. */
+@media (max-width:1280px) {
+  .desktop-nav { gap:18px; }
+  .service-row.has-item-media .service-row-media { opacity:.12;width:100px;right:30px; }
+}
+@media (max-width:1180px) {
+  .site-header { grid-template-columns:1fr auto; }
+  .desktop-nav { display:none; }
+  .service-row.has-item-media .service-row-media { display:none; }
+}
+@media (max-width:900px) {
+  .hero-meta { align-items:flex-start; }
+  .content-state { width:100%;margin-left:20px; }
+  .card-top { align-items:flex-start; }
+}
+@media (max-width:760px) {
+  .reveal {
+    transform:translate3d(0,14px,0);
+    filter:blur(2px);
+  }
+  .service-row:hover h3,
+  .service-row:hover p,
+  .service-row:hover .service-tag {
+    transform:none;
+  }
+  .button:hover,
+  .work-card:hover,
+  .team-card:hover,
+  .partner-node:hover {
+    transform:none;
+  }
+  .content-state { margin-left:0; }
+  .cta-link,
+  .page-block-link {
+    align-items:flex-start;
+  }
+}
+
+@keyframes boot-stage-text {
+  from { opacity:0;transform:translate3d(0,5px,0);filter:blur(3px); }
+  to { opacity:1;transform:translate3d(0,0,0);filter:blur(0); }
+}
+.boot-state strong {
+  animation:boot-stage-text .62s var(--ease-butter) both;
+}
+.boot-progress-track span {
+  transition:width .12s linear;
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .reveal {
+    opacity:1;
+    transform:none;
+    filter:none;
+    transition:none !important;
+  }
+  .boot-state strong { animation:none; }
+  .boot-progress-track span { transition:none; }
+}
