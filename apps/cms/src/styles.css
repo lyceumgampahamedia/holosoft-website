@@ -541,3 +541,78 @@ button,input,textarea,select { line-height:1.25; }
 @media(max-width:760px) {
   .case-study-admin { padding:0 13px 16px; }
 }
+/* =========================================================
+   CMS V1.8 — VISUAL STORYTELLING CONTROLS
+   ========================================================= */
+.case-gallery-admin-list,
+.case-chapter-admin-list {
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.case-gallery-admin,
+.case-chapter-admin {
+  border:1px solid #2c2e37;
+  background:#080809;
+  padding:16px;
+  position:relative;
+  transition:border-color .55s var(--ease-butter),box-shadow .7s var(--ease-butter),background .65s var(--ease-butter);
+}
+.case-gallery-admin:hover,
+.case-chapter-admin:hover {
+  border-color:#414862;
+  background:linear-gradient(140deg,rgba(33,83,161,.035),#080809 52%,rgba(111,32,129,.025));
+  box-shadow:0 16px 50px rgba(33,83,161,.025);
+}
+.case-module-toolbar {
+  min-height:38px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding-bottom:13px;
+  margin-bottom:16px;
+  border-bottom:1px solid #262833;
+}
+.case-module-toolbar>span {
+  font:8px/1 var(--mono);
+  letter-spacing:.12em;
+  color:#7896cc;
+}
+.case-module-toolbar>div { display:flex;gap:5px; }
+.case-module-toolbar button {
+  width:29px;
+  height:29px;
+  border:1px solid #343640;
+  background:#09090a;
+  color:#777986;
+  cursor:pointer;
+  transition:border-color .42s var(--ease-butter),color .42s var(--ease-butter),background .5s var(--ease-butter);
+}
+.case-module-toolbar button:hover { border-color:#6077aa;color:#fff;background:#0d0f15; }
+.case-module-toolbar button.danger-mini:hover { border-color:#7b3f6a;color:#e0abd1; }
+.case-gallery-admin .media-editor,
+.case-chapter-admin .media-editor { margin-top:16px; }
+.case-gallery-admin .media-preview { min-height:180px; }
+.case-chapter-admin .media-preview { min-height:220px; }
+.architecture-node-admin-grid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  margin-top:18px;
+}
+.case-study-admin .mini-action:disabled {
+  opacity:.34;
+  cursor:not-allowed;
+  border-color:#31323a;
+  box-shadow:none;
+}
+
+@media(max-width:1180px) {
+  .architecture-node-admin-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:760px) {
+  .architecture-node-admin-grid { grid-template-columns:1fr; }
+  .case-gallery-admin,
+  .case-chapter-admin { padding:12px; }
+}
