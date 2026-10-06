@@ -123,7 +123,7 @@ function normalizeContent(content) {
 }
 async function readPublished() { return normalizeContent(await readJson(contentPath)); }
 async function readDraft() {
-  try { return await readJson(draftPath); }
+  try { return normalizeContent(await readJson(draftPath)); }
   catch (error) {
     if (error.code !== 'ENOENT') throw error;
     return readPublished();
