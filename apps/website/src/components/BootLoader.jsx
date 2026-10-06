@@ -22,7 +22,7 @@ export default function BootLoader({ onComplete }) {
       start ??= time;
       const raw = Math.min((time - start) / duration, 1);
       const eased = raw < 0.5 ? 4 * raw * raw * raw : 1 - Math.pow(-2 * raw + 2, 3) / 2;
-      setProgress(Math.round(eased * 100));
+      setProgress(eased * 100);
       if (raw < 1) raf = requestAnimationFrame(tick);
       else {
         setProgress(100);
@@ -73,8 +73,8 @@ export default function BootLoader({ onComplete }) {
         ))}
       </div>
       <div className="boot-bottom">
-        <div className="boot-state"><span>STATUS</span><strong>{active.text}</strong></div>
-        <div className="boot-progress-wrap"><div className="boot-progress-track"><span style={{ width: `${progress}%` }} /></div><span className="boot-percent">{String(progress).padStart(3, '0')}%</span></div>
+        <div className="boot-state"><span>STATUS</span><strong key={active.text}>{active.text}</strong></div>
+        <div className="boot-progress-wrap"><div className="boot-progress-track"><span style={{ width: `${progress}%` }} /></div><span className="boot-percent">{String(Math.round(progress)).padStart(3, '0')}%</span></div>
       </div>
       <div className="boot-shutter boot-shutter-top" /><div className="boot-shutter boot-shutter-bottom" />
     </div>
