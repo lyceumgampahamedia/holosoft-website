@@ -1475,3 +1475,439 @@ body::before {
 
 .service-row.has-item-media>.service-no,.service-row.has-item-media>h3,.service-row.has-item-media>p,.service-row.has-item-media>.service-tag,.service-row.has-item-media>.row-arrow{position:relative;z-index:1}
 .partners-section-media:not(.media-background){width:min(100%,720px);height:240px;margin:0 0 44px auto}.partners-section-media:not(.media-background) img{height:100%}
+/* =========================================================
+   HOLOSOFT V1.5 — BLACK CORE / HEAVY BRAND ACCENTS
+   Pure-black canvas. Brand colour is structural at rest and
+   becomes the dominant interaction state on hover.
+   ========================================================= */
+
+:root {
+  --bg: #000000;
+  --panel: #000000;
+  --brand-blue-hot: #2d6fd8;
+  --brand-violet-hot: #9138ad;
+  --brand-deep-hot: #54206d;
+  --brand-glow-blue: rgba(33,83,161,.34);
+  --brand-glow-violet: rgba(111,32,129,.28);
+  --brand-line: linear-gradient(90deg,#2153a1 0%,#3f1658 48%,#6f2081 100%);
+}
+
+/* TRUE BLACK CANVAS — no page-wide haze or grid */
+html,
+body {
+  background: #000 !important;
+  background-image: none !important;
+}
+
+.site-header,
+.manifesto,
+.services,
+.work,
+.process,
+.partners,
+.team,
+.cta,
+.dynamic-page,
+.page-hero,
+.page-blocks,
+.site-footer {
+  background-color: #000;
+}
+
+.site-header {
+  background: rgba(0,0,0,.94) !important;
+  border-bottom-color: rgba(33,83,161,.28);
+}
+
+.hero::before,
+.cms-created-page::before {
+  background: none !important;
+}
+
+.manifesto-backdrop,
+.partners-section-media.media-background,
+.team-section-media.media-background,
+.contact-section-media.media-background,
+.page-hero-backdrop,
+.page-block-background {
+  opacity: .11;
+}
+
+/* HEAVIER BRAND INFRASTRUCTURE */
+.site-header::after {
+  height: 2px;
+  opacity: 1;
+  background: var(--brand-line);
+  box-shadow: 0 0 18px var(--brand-glow-blue), 0 0 28px var(--brand-glow-violet);
+}
+
+.manifesto::before,
+.services::before,
+.work::before,
+.process::before,
+.partners::before,
+.team::before,
+.cta::before,
+.page-hero::before {
+  height: 2px !important;
+  width: min(520px,52vw) !important;
+  opacity: 1 !important;
+  background: var(--brand-line) !important;
+  box-shadow: 0 0 22px var(--brand-glow-blue), 0 0 34px var(--brand-glow-violet) !important;
+}
+
+.section-index,
+.eyebrow,
+.micro-label,
+.team-card-meta > span,
+.partner-meta small,
+.page-system-card > span,
+.page-block-index {
+  color: #759be5;
+}
+
+.section-head h2::before,
+.manifesto h2::before,
+.cta h2::before {
+  color: #8f45a7;
+}
+
+.hero-copy .outline {
+  background: linear-gradient(100deg,#2f72dc 0%,#643883 50%,#9c42b4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: saturate(1.14);
+  text-shadow: 0 0 24px rgba(33,83,161,.18),0 0 38px rgba(111,32,129,.12);
+}
+
+.brand-wordmark-color {
+  opacity: .46;
+  filter: drop-shadow(0 0 13px rgba(33,83,161,.14)) drop-shadow(0 0 17px rgba(111,32,129,.12));
+}
+
+/* Colour lives in the geometry rather than in the page background */
+.core-energy { opacity: .14; }
+.core-logo-color { opacity: .54; }
+.ring-a::before { opacity: .9; border-top-width:2px; }
+.ring-b::before { opacity: .76; border-bottom-width:2px; }
+.ring-c { border-color:rgba(111,32,129,.58); }
+.axis-x { background:linear-gradient(90deg,transparent,#2153a1,#6f2081,transparent);opacity:.65; }
+.axis-y { background:linear-gradient(0deg,transparent,#3f1658,#2153a1,transparent);opacity:.6; }
+
+.hero-ticker {
+  background:#000;
+  border-top-color:rgba(33,83,161,.58);
+  border-bottom-color:rgba(111,32,129,.52);
+}
+
+/* BLACK CARDS / PANELS WITH COLOURED EDGES */
+.terminal-card,
+.work-card,
+.process-step,
+.partner-node,
+.team-card,
+.page-system-card,
+.page-block.layout-callout,
+.section-media {
+  background:#000 !important;
+}
+
+.terminal-card {
+  border-color:rgba(33,83,161,.34);
+  box-shadow:inset 2px 0 #2153a1;
+}
+
+.work-card,
+.team-card,
+.partner-node,
+.page-system-card {
+  border-color:rgba(77,82,121,.58);
+}
+
+.process-grid {
+  border-color:rgba(33,83,161,.3);
+}
+.process-step {
+  border-color:rgba(67,63,92,.72);
+}
+.process-step:nth-child(4n+1) .step-marker { border-color:#2153a1; }
+.process-step:nth-child(4n+2) .step-marker { border-color:#3f1658; }
+.process-step:nth-child(4n+3) .step-marker { border-color:#6f2081; }
+.process-step:nth-child(4n) .step-marker { border-color:#496eb0; }
+
+.service-list {
+  border-top-color:rgba(33,83,161,.55);
+}
+.service-row {
+  border-bottom-color:rgba(78,61,93,.68);
+}
+.service-row::after {
+  width:4px;
+  opacity:.72;
+  transform:scaleY(.36);
+}
+.service-row:nth-child(3n+1)::after { background:#2153a1; }
+.service-row:nth-child(3n+2)::after { background:#6f2081; }
+.service-row:nth-child(3n)::after { background:#3f1658; }
+
+/* EVERY PRIMARY INTERACTION CHARGES INTO BRAND COLOUR */
+.button,
+.header-cta,
+.cta-link,
+.page-block-link,
+.desktop-nav a,
+.footer-meta a,
+.team-links a,
+.service-row,
+.work-card,
+.process-step,
+.partner-node,
+.team-card,
+.core-stage,
+.brand-wordmark,
+.partner-logo-wrap {
+  transition-timing-function:var(--ease-smooth) !important;
+}
+
+.button,
+.header-cta,
+.cta-link,
+.page-block-link {
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+
+.button::before,
+.header-cta::before,
+.cta-link::before,
+.page-block-link::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:linear-gradient(105deg,#2153a1 0%,#3f1658 52%,#6f2081 100%);
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform .55s var(--ease-smooth);
+}
+
+.button:hover::before,
+.header-cta:hover::before,
+.cta-link:hover::before,
+.page-block-link:hover::before {
+  transform:scaleX(1);
+}
+
+.button:hover,
+.header-cta:hover,
+.cta-link:hover,
+.page-block-link:hover {
+  color:#fff !important;
+  border-color:#7e3b96 !important;
+  box-shadow:0 0 0 1px rgba(33,83,161,.25),0 14px 42px rgba(33,83,161,.15),0 10px 34px rgba(111,32,129,.13) !important;
+}
+
+.button-solid {
+  background:#fff;
+  color:#000;
+}
+.button-solid:hover {
+  background:transparent !important;
+}
+
+.button-ghost {
+  background:#000 !important;
+  border-color:rgba(33,83,161,.58);
+}
+.button-ghost:hover span,
+.header-cta:hover span,
+.cta-link:hover span,
+.page-block-link:hover span {
+  color:#fff !important;
+}
+
+/* Navigation gets a stronger signal without becoming a coloured bar */
+.desktop-nav a {
+  color:#bdbdc2;
+}
+.desktop-nav a::after {
+  height:2px;
+  bottom:-11px;
+  box-shadow:0 0 12px rgba(33,83,161,.3),0 0 18px rgba(111,32,129,.22);
+}
+.desktop-nav a:hover {
+  color:#fff !important;
+  text-shadow:0 0 13px rgba(73,124,220,.38);
+}
+
+/* Services — replace the old WHITE hover with Holosoft colour */
+.service-row::before {
+  background:linear-gradient(100deg,
+    rgba(33,83,161,.96) 0%,
+    rgba(63,22,88,.94) 48%,
+    rgba(111,32,129,.92) 100%) !important;
+}
+.service-row:hover {
+  color:#fff !important;
+  box-shadow:0 12px 42px rgba(33,83,161,.12),0 9px 38px rgba(111,32,129,.11);
+}
+.service-row:hover::after {
+  transform:scaleY(1);
+  background:#fff;
+  opacity:.78;
+}
+.service-row:hover p,
+.service-row:hover .service-tag,
+.service-row:hover .service-no,
+.service-row:hover .row-arrow {
+  color:#fff !important;
+}
+
+/* Cards receive an unmistakable but still dark colour state */
+.work-card:hover,
+.team-card:hover,
+.partner-node:hover,
+.page-system-card:hover {
+  background:
+    linear-gradient(135deg,rgba(33,83,161,.18),rgba(0,0,0,.96) 42%,rgba(111,32,129,.17)) !important;
+  border-color:#6e3985 !important;
+  box-shadow:0 24px 76px rgba(33,83,161,.12),0 18px 58px rgba(111,32,129,.11) !important;
+}
+
+.work-card:hover::after,
+.team-card:hover::before,
+.partner-node:hover::before {
+  opacity:1;
+}
+
+.work-card:hover .card-top,
+.work-card:hover .card-copy h3,
+.team-card:hover h3,
+.partner-node:hover strong {
+  color:#fff;
+}
+.work-card:hover .card-copy p,
+.team-card:hover p {
+  color:#c8c4cf;
+}
+
+.process-step:hover {
+  background:linear-gradient(145deg,rgba(33,83,161,.20),#000 47%,rgba(111,32,129,.17)) !important;
+  box-shadow:inset 0 0 0 1px rgba(111,32,129,.22);
+}
+.process-step:hover h3 { color:#fff; }
+.process-step:hover p { color:#c6c1ca; }
+.process-step:hover::after {
+  height:3px;
+  box-shadow:0 0 18px rgba(33,83,161,.3),0 0 24px rgba(111,32,129,.22);
+}
+
+/* Partners / team links visibly switch state */
+.partner-logo-wrap {
+  background:#000;
+  border-color:rgba(33,83,161,.38);
+}
+.partner-node:hover .partner-logo-wrap {
+  border-color:#8b43a3;
+  background:rgba(33,83,161,.08);
+  box-shadow:0 0 28px rgba(33,83,161,.11);
+}
+
+.team-links a,
+.footer-meta a {
+  position:relative;
+}
+.team-links a:hover,
+.footer-meta a:hover {
+  color:#b880d0 !important;
+  text-shadow:0 0 16px rgba(111,32,129,.35);
+}
+
+/* CTA becomes the strongest colour event on the page */
+.cta {
+  background:#000 !important;
+}
+.cta::after {
+  content:"";
+  position:absolute;
+  right:-8%;
+  bottom:-38%;
+  width:min(760px,62vw);
+  aspect-ratio:1;
+  pointer-events:none;
+  border-radius:50%;
+  background:conic-gradient(from 210deg,transparent 0 18%,rgba(33,83,161,.16),transparent 42% 58%,rgba(111,32,129,.15),transparent 82%);
+  filter:blur(3px);
+  opacity:.64;
+}
+.cta:hover::after { opacity:.95; }
+.cta-link {
+  border-top-color:rgba(33,83,161,.75);
+  border-bottom-color:rgba(111,32,129,.65);
+}
+
+/* Dynamic page interaction states */
+.page-block {
+  background:#000;
+}
+.page-block::before {
+  height:2px;
+}
+.page-block:hover::before {
+  width:min(440px,45vw);
+  box-shadow:0 0 24px color-mix(in srgb,var(--block-accent) 46%,transparent);
+}
+.page-block.layout-callout:hover {
+  background:linear-gradient(100deg,color-mix(in srgb,var(--block-accent) 15%,#000),#000 62%) !important;
+}
+
+/* Media stays dark on the black canvas, then restores colour on hover */
+.section-media {
+  border-color:rgba(70,83,122,.5);
+}
+.section-media::before {
+  background:linear-gradient(120deg,rgba(33,83,161,.16),transparent 38%,rgba(111,32,129,.13));
+}
+.section-media:hover {
+  border-color:#70408b;
+  box-shadow:0 0 34px rgba(33,83,161,.11),0 0 42px rgba(111,32,129,.08);
+}
+.section-media:hover img,
+.team-card:hover .section-media img,
+.work-card:hover .section-media img {
+  filter:saturate(1.08) contrast(1.05) brightness(.98);
+}
+
+/* Custom cursor gets a stronger brand read */
+.cursor-orb {
+  opacity:.055;
+}
+.cursor-orb.is-hot {
+  opacity:.19;
+}
+.site-cursor.is-hot .cursor-ring {
+  filter:drop-shadow(0 0 8px rgba(33,83,161,.72)) drop-shadow(0 0 13px rgba(111,32,129,.6));
+}
+
+/* Keep mobile clean: colour accents remain, hover-only transforms do not matter */
+@media (max-width:760px) {
+  .manifesto::before,
+  .services::before,
+  .work::before,
+  .process::before,
+  .partners::before,
+  .team::before,
+  .cta::before,
+  .page-hero::before {
+    width:min(250px,65vw) !important;
+  }
+  .cta::after { width:95vw;right:-40%;opacity:.42; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .button::before,
+  .header-cta::before,
+  .cta-link::before,
+  .page-block-link::before { transition:none; }
+}
