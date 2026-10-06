@@ -163,6 +163,13 @@ function SectionHead({ index, label, heading, media }) {
   return <div className={`section-head reveal ${media?.src ? 'with-media' : ''}`}><div className="section-index">[ {index} ]</div><div className="section-heading-copy"><p className="micro-label">{label}</p><h2>{heading}</h2>{media?.src && media?.position !== 'background' && <Media media={media} className="section-head-media" />}</div>{media?.src && media?.position === 'background' && <Media media={media} className="section-head-backdrop" decorative />}</div>;
 }
 
+function ProjectCard({ project }) {
+  const body = <><div className="card-top"><span>{project.code}</span><span>{project.type}</span></div><div className={`card-visual visual-${project.visual}`}>{project.media?.src ? <Media media={project.media} className="project-card-media" /> : <ProjectVisual type={project.visual} />}</div><div className="card-copy"><div><h3>{project.title}</h3><p>{project.description}</p></div>{project.caseStudyEnabled !== false && <span className="case-card-link">VIEW CASE / ↗</span>}</div></>;
+  const className = `work-card reveal ${project.featured ? 'featured' : ''}`;
+  if (project.caseStudyEnabled === false) return <article className={className}>{body}</article>;
+  return <a className={className} href={appHref(`/work/${project.slug || project.id}`)} aria-label={`Open case study: ${project.title}`}>{body}</a>;
+}
+
 function HomePage({ content, apiState }) {
   const tickerItems = useMemo(() => content.services?.map((service) => service.title.toUpperCase()) || [], [content.services]);
   const heroMedia = content.hero?.media;
@@ -198,7 +205,7 @@ function HomePage({ content, apiState }) {
 
     <section className="work section-shell" id="work">
       <SectionHead index="03 / SYSTEMS" label={content.sections?.work?.label} heading={content.sections?.work?.heading} media={content.sections?.work?.media} />
-      <div className="work-grid">{content.projects.map((project) => <a className={`work-card reveal ${project.featured ? 'featured' : ''}`} href={appHref(`/work/${project.slug || project.id}`)} aria-label={`Open case study: ${project.title}`} key={project.id}><div className="card-top"><span>{project.code}</span><span>{project.type}</span></div><div className={`card-visual visual-${project.visual}`}>{project.media?.src ? <Media media={project.media} className="project-card-media" /> : <ProjectVisual type={project.visual} />}</div><div className="card-copy"><div><h3>{project.title}</h3><p>{project.description}</p></div><span className="case-card-link">VIEW CASE / ↗</span></div></a>)}</div>
+      <div className="work-grid">{content.projects.map((project) => <ProjectCard project={project} key={project.id} />)}</div>
     </section>
 
     <section className="process section-shell" id="process">
